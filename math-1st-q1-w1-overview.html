@@ -10,7 +10,7 @@
 body{font-family:'Nunito','Century Gothic','Arial Rounded MT Bold',Verdana,sans-serif;background:#F2F0E8;color:#2B1D12;line-height:1.6;-webkit-font-smoothing:antialiased}
 .page-wrap{max-width:920px;margin:0 auto;background:#FAF8F4;box-shadow:0 0 40px rgba(0,0,0,0.07);position:relative;overflow:visible}
 .paint-border{height:8px;background:linear-gradient(90deg,#FF7043 0%,#FF7043 12.5%,#FFB74D 12.5%,#FFB74D 25%,#FFF176 25%,#FFF176 37.5%,#81C784 37.5%,#81C784 50%,#4DD0E1 50%,#4DD0E1 62.5%,#7986CB 62.5%,#7986CB 75%,#CE93D8 75%,#CE93D8 87.5%,#F48FB1 87.5%,#F48FB1 100%)}
-.header{background:linear-gradient(135deg,#0E1C42 0%,#1A2D5A 60%,#243868 100%);padding:22px 28px 24px;position:relative;overflow:hidden}
+.header{background:linear-gradient(135deg,#0E1C42 0%,#1A2D5A 60%,#243868 100%);border-bottom:6px solid #0288D1;padding:22px 28px 24px;position:relative;overflow:hidden}
 .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#FF7043,#FFB74D,#FFF176,#81C784,#4DD0E1,#7986CB,#CE93D8)}
 .header-brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .header-logo{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
@@ -56,6 +56,16 @@ body{font-family:'Nunito','Century Gothic','Arial Rounded MT Bold',Verdana,sans-
 .ican-text{font-size:17px;color:#1B4332;line-height:1.6;padding-top:4px}
 .vocab-box{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0}
 .vocab-tag{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border:2px solid #81D4FA;border-radius:30px;padding:8px 18px;font-size:16px;font-weight:800;color:#0277BD}
+.vocab-grid{display:flex;flex-wrap:wrap;gap:14px;padding:4px 0}
+.vocab-flip{width:160px;height:120px;perspective:600px;cursor:pointer}
+.vocab-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d}
+.vocab-flip:hover .vocab-inner,.vocab-flip.flipped .vocab-inner{transform:rotateY(180deg)}
+.vocab-front,.vocab-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+.vocab-front{background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border:2px solid #81D4FA}
+.vocab-front .vf-emoji{font-size:28px;margin-bottom:4px}
+.vocab-front .vf-word{font-size:17px;font-weight:800;color:#0277BD}
+.vocab-front .vf-hint{font-size:10px;color:#5A4D3E;margin-top:4px;opacity:0.7}
+.vocab-back{background:linear-gradient(135deg,#FFF8E1,#FFECB3);border:2px solid #FFD54F;transform:rotateY(180deg);font-size:13px;color:#5A4D3E;line-height:1.45;font-weight:600}
 .reflection-box{background:linear-gradient(135deg,#F3E5F5,#E1BEE7);border:2px solid #CE93D8;border-radius:16px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px}
 .ref-text{font-size:17px;color:#2B1D12;line-height:1.7;font-style:italic}
 .callout{border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
@@ -349,13 +359,14 @@ body{font-family:'Nunito','Century Gothic','Arial Rounded MT Bold',Verdana,sans-
   <div class="card theme-coral">
     <div class="card-head">
       <div class="card-head-icon">📖</div>
-      <div><div class="card-head-label">Key Term</div><div class="card-head-title">Vocabulary Word</div></div>
+      <div><div class="card-head-label">Key Terms</div><div class="card-head-title">Vocabulary Words</div></div>
     </div>
     <div class="card-body">
-      <div class="vocab-box">
-        <div class="vocab-tag">🧩 tricky</div> <div class="vocab-tag">💪 persevere</div>
+      <p style="font-size:13px;color:#9A8E82;margin-bottom:10px;">Hover or tap to flip!</p>
+      <div class="vocab-grid">
+        <div class="vocab-flip" onclick="this.classList.toggle('flipped')"><div class="vocab-inner"><div class="vocab-front"><div class="vf-emoji">🧩</div><div class="vf-word">Tricky</div><div class="vf-hint">tap to flip</div></div><div class="vocab-back">Something that is not easy and takes extra thinking.</div></div></div>
+        <div class="vocab-flip" onclick="this.classList.toggle('flipped')"><div class="vocab-inner"><div class="vocab-front"><div class="vf-emoji">💪</div><div class="vf-word">Persevere</div><div class="vf-hint">tap to flip</div></div><div class="vocab-back">To keep trying even when something feels hard.</div></div></div>
       </div>
-      <p style="margin-top:14px;font-size:15px;color:#5A4D3E;"><strong>Tricky</strong> means something that is not easy and takes extra thinking. <strong>Persevere</strong> means to keep trying even when something feels hard.</p>
     </div>
   </div>
 
