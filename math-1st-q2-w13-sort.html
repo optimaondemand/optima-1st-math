@@ -1,0 +1,410 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Greater or Less Sort</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style>
+  /* Layout: one centered column. Score stars on top, then [card ? target] strip, two big bins, a status line, and a Next button. */
+  :root {
+    --bg: #EAF0FA;
+    --surface: #FFFFFF;
+    --ink: #16233F;
+    --muted: #4F5E7D;
+    --line: #C7D3EA;
+    --less-bg: #C2410C;
+    --less-fg: #FFFFFF;
+    --great-bg: #0B7A75;
+    --great-fg: #FFFFFF;
+    --star: #F2B01E;
+    --star-off: #D3DBEC;
+    --dot-card: #C2255C;
+    --dot-target: #1971C2;
+    --good: #1B7F43;
+    --warn: #A84B05;
+    --focus: #16233F;
+    --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+    --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --c: clamp(13px, 3.8vw, 18px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101829;
+      --surface: #1A2540;
+      --ink: #EAF0FF;
+      --muted: #A3B0D0;
+      --line: #2E3C61;
+      --less-bg: #F28C52;
+      --less-fg: #26130A;
+      --great-bg: #45C4BC;
+      --great-fg: #072523;
+      --star: #F6BE3B;
+      --star-off: #33415F;
+      --dot-card: #F06595;
+      --dot-target: #4DABF7;
+      --good: #5CD68A;
+      --warn: #F5A25D;
+      --focus: #EAF0FF;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101829;
+    --surface: #1A2540;
+    --ink: #EAF0FF;
+    --muted: #A3B0D0;
+    --line: #2E3C61;
+    --less-bg: #F28C52;
+    --less-fg: #26130A;
+    --great-bg: #45C4BC;
+    --great-fg: #072523;
+    --star: #F6BE3B;
+    --star-off: #33415F;
+    --dot-card: #F06595;
+    --dot-target: #4DABF7;
+    --good: #5CD68A;
+    --warn: #F5A25D;
+    --focus: #EAF0FF;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    padding-block: 20px 36px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+  .top { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end; justify-content: space-between; }
+  .top > div { min-width: 0; }
+  h1 { margin: 0; font: 700 clamp(1.6rem, 6vw, 2.1rem)/1.1 var(--font-display); text-wrap: balance; }
+  .sub { margin: 6px 0 0; color: var(--muted); font-weight: 700; line-height: 1.4; max-width: 34ch; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+  .seg { display: inline-flex; border: 2px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+  .seg button {
+    font: 700 .95rem var(--font-body); color: var(--ink); background: transparent; border: 0;
+    padding: 9px 15px; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; cursor: pointer; }
+  .check input { width: 22px; height: 22px; accent-color: var(--dot-target); }
+
+  .pipsrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .count { font: 600 1.05rem var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pips { display: flex; gap: 4px; }
+  .pip svg { display: block; width: 28px; height: 28px; fill: var(--star-off); stroke: none; }
+  .pip.first svg { fill: var(--star); }
+  .pip.retry svg { fill: var(--star); opacity: .45; }
+  .pip.now svg { stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+
+  .compare { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; }
+  .panel {
+    background: var(--surface); border: 2px solid var(--line); border-radius: 22px;
+    padding: 14px 8px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0;
+  }
+  .eyebrow { font: 800 .72rem/1 var(--font-body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+  .bignum { font: 700 clamp(3.6rem, 17vw, 5.6rem)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+  .card-num { color: var(--dot-card); }
+  .target-num { color: var(--dot-target); }
+
+  .frames { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .frame { display: grid; grid-template-columns: repeat(5, var(--c)); gap: 3px; padding: 5px; border: 2px solid var(--line); border-radius: 8px; }
+  .cell { width: var(--c); height: var(--c); border-radius: 50%; background: var(--bg); }
+  .frames.fc .cell.on { background: var(--dot-card); }
+  .frames.ft .cell.on { background: var(--dot-target); }
+
+  .sign {
+    width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+    font: 700 1.7rem/1 var(--font-display); color: var(--muted);
+    border: 3px dashed var(--line); background: var(--surface);
+  }
+  .sign.is-less { background: var(--less-bg); color: var(--less-fg); border: 3px solid transparent; font-size: 2rem; }
+  .sign.is-great { background: var(--great-bg); color: var(--great-fg); border: 3px solid transparent; font-size: 2rem; }
+
+  .bins { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bin {
+    font-family: var(--font-display); border: 0; border-radius: 22px; padding: 14px 10px 16px; min-height: 112px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    cursor: pointer; box-shadow: 0 5px 0 rgba(0, 0, 0, .22); transition: transform .08s, box-shadow .08s, opacity .15s;
+  }
+  .bin .sym { font-size: 3rem; font-weight: 700; line-height: 1; }
+  .bin .lbl { font-size: 1.1rem; font-weight: 600; }
+  .bin.less { background: var(--less-bg); color: var(--less-fg); }
+  .bin.great { background: var(--great-bg); color: var(--great-fg); }
+  .bin:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .22); }
+  .bin.dim { opacity: .4; }
+  .bin:disabled { cursor: default; }
+
+  .status {
+    margin: 0; min-height: 3.4em; display: flex; align-items: center; justify-content: center; text-align: center;
+    font: 700 1.2rem/1.4 var(--font-body); text-wrap: balance;
+  }
+  .status .c { color: var(--dot-card); font-family: var(--font-display); font-size: 1.3em; }
+  .status .t { color: var(--dot-target); font-family: var(--font-display); font-size: 1.3em; }
+  .status.good { color: var(--good); }
+  .status.warn { color: var(--warn); }
+  .nextrow { display: flex; justify-content: center; min-height: 56px; }
+  .btn {
+    font: 600 1.25rem var(--font-display); background: var(--ink); color: var(--bg); border: 0;
+    border-radius: 999px; padding: 14px 32px; cursor: pointer; box-shadow: 0 4px 0 rgba(0, 0, 0, .25);
+  }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+
+  .done { align-items: center; text-align: center; padding: 26px 16px 28px; gap: 12px; }
+  .done h2 { margin: 0; font: 700 clamp(1.8rem, 7vw, 2.4rem)/1.1 var(--font-display); }
+  .score { font: 700 clamp(3rem, 14vw, 4.4rem)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+  .done p { margin: 0; color: var(--muted); font-weight: 800; }
+  .done .pips { flex-wrap: wrap; justify-content: center; margin: 6px 0 10px; }
+  .done .pip svg { width: 34px; height: 34px; }
+  .done .pip { animation: pop .35s ease-out both; animation-delay: calc(var(--i) * 80ms); }
+
+  @keyframes pop { 0% { transform: scale(.8); opacity: 0; } 100% { transform: none; opacity: 1; } }
+  @keyframes shake { 0%, 100% { transform: none; } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+  @keyframes boing { 0% { transform: scale(.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .a-pop { animation: pop .25s ease-out; }
+  .a-shake { animation: shake .35s ease-in-out; }
+  .a-boing { animation: boing .35s ease-out; }
+  @media (prefers-reduced-motion: reduce) {
+    .a-pop, .a-shake, .a-boing, .done .pip { animation: none; }
+    .bin { transition: none; }
+  }
+
+  @media (max-width: 420px) {
+    .compare { gap: 6px; }
+    .sign { width: 42px; height: 42px; font-size: 1.4rem; }
+    .sign.is-less, .sign.is-great { font-size: 1.7rem; }
+    .pip svg { width: 25px; height: 25px; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Greater or Less Sort</h1>
+      <p class="sub">Compare each card to the number on the right. Is it less than, or greater than?</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Biggest number">
+        <button type="button" data-max="10" aria-pressed="false">Up to 10</button>
+        <button type="button" data-max="20" aria-pressed="true">Up to 20</button>
+      </div>
+      <label class="check" for="dots"><input type="checkbox" id="dots" checked> Show dots</label>
+    </div>
+  </header>
+  <main id="game" aria-live="polite"></main>
+</div>
+
+<script>
+(function () {
+  var ROUND = 8;
+
+  // BEGIN-GEN
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function makeRound(max, prevTarget, size) {
+    var lo = 4, hi = max - 3, t;
+    do { t = lo + Math.floor(Math.random() * (hi - lo + 1)); } while (t === prevTarget && hi > lo);
+    var lower = t - 1, upper = max - t;
+    var nLess = Math.floor(size / 2);
+    if (size - nLess > upper) nLess = size - upper;
+    if (nLess > lower) nLess = lower;
+    var nGreat = size - nLess;
+    var lows = [], highs = [], i;
+    for (i = 1; i < t; i++) lows.push(i);
+    for (i = t + 1; i <= max; i++) highs.push(i);
+    var cards = shuffle(shuffle(lows).slice(0, nLess).concat(shuffle(highs).slice(0, nGreat)));
+    return { target: t, cards: cards };
+  }
+  // END-GEN
+
+  var S = { max: 20, dots: true, target: 0, cards: [], idx: 0, results: [], phase: 'ask', wrong: 0, reveal: false, anim: '', focus: '' };
+
+  try {
+    var saved = JSON.parse(localStorage.getItem('greater-less-sort') || '{}');
+    if (saved.max === 10 || saved.max === 20) S.max = saved.max;
+    if (typeof saved.dots === 'boolean') S.dots = saved.dots;
+  } catch (e) {}
+  function save() {
+    try { localStorage.setItem('greater-less-sort', JSON.stringify({ max: S.max, dots: S.dots })); } catch (e) {}
+  }
+
+  var game = document.getElementById('game');
+  var dotsBox = document.getElementById('dots');
+
+  function syncHeader() {
+    var btns = document.querySelectorAll('.seg button');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', String(parseInt(btns[i].getAttribute('data-max'), 10) === S.max));
+    }
+    dotsBox.checked = S.dots;
+  }
+
+  function newRound() {
+    var r = makeRound(S.max, S.target, ROUND);
+    S.target = r.target; S.cards = r.cards;
+    S.idx = 0; S.results = []; S.phase = 'ask'; S.wrong = 0; S.reveal = false; S.anim = 'a-pop'; S.focus = '';
+  }
+
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.95 6.2 6.8.9-5 4.7 1.25 6.7L12 17.7l-6 3.3 1.25-6.7-5-4.7 6.8-.9z"/></svg>';
+
+  function frames(n, cls) {
+    var count = S.max > 10 ? 2 : 1, out = '<div class="frames ' + cls + '" aria-hidden="true">';
+    for (var f = 0; f < count; f++) {
+      out += '<div class="frame">';
+      for (var i = 0; i < 10; i++) out += '<span class="cell' + (f * 10 + i < n ? ' on' : '') + '"></span>';
+      out += '</div>';
+    }
+    return out + '</div>';
+  }
+
+  function pips(done) {
+    var h = '<div class="pips">';
+    for (var i = 0; i < ROUND; i++) {
+      var c = 'pip';
+      if (S.results[i] !== undefined) c += S.results[i] ? ' first' : ' retry';
+      else if (i === S.idx && !done) c += ' now';
+      h += '<span class="' + c + '" style="--i:' + i + '">' + STAR + '</span>';
+    }
+    return h + '</div>';
+  }
+
+  function render() {
+    if (S.phase === 'done') { renderDone(); return; }
+    var n = S.cards[S.idx], t = S.target, less = n < t;
+    var showDots = S.dots || S.reveal;
+    var sign = '?', signCls = 'sign';
+    if (S.phase === 'right') { sign = less ? '&lt;' : '&gt;'; signCls += less ? ' is-less' : ' is-great'; }
+    var cardAnim = S.anim ? ' ' + S.anim : '';
+    var signAnim = S.phase === 'right' ? ' a-boing' : '';
+
+    var status;
+    if (S.phase === 'ask') {
+      status = '<p class="status">Is <span class="c">' + n + '</span> less than <span class="t">' + t + '</span>, or greater than <span class="t">' + t + '</span>?</p>';
+    } else if (S.phase === 'wrong') {
+      status = '<p class="status warn">Not quite. Look at the dots. ' + n + ' has ' + (less ? 'fewer' : 'more') + ' dots than ' + t + '. Try again!</p>';
+    } else {
+      status = '<p class="status good">Yes! ' + n + ' is ' + (less ? 'less' : 'greater') + ' than ' + t + '.</p>';
+    }
+
+    var right = S.phase === 'right';
+    var lessCls = 'bin less', greatCls = 'bin great';
+    if (right) { if (less) greatCls += ' dim'; else lessCls += ' dim'; }
+    var lastPick = S.wrong > 0 && S.phase === 'wrong' ? S.lastPick : '';
+    if (lastPick === 'less') lessCls += ' dim';
+    if (lastPick === 'greater') greatCls += ' dim';
+
+    var last = S.idx === ROUND - 1;
+    var nextRow = '<div class="nextrow">' + (right ? '<button type="button" class="btn" data-action="next">' + (last ? 'See my score' : 'Next card') + '</button>' : '') + '</div>';
+
+    game.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:18px">' +
+      '<div class="pipsrow"><span class="count">Card ' + (S.idx + 1) + ' of ' + ROUND + '</span>' + pips(false) + '</div>' +
+      '<div class="compare">' +
+        '<div class="panel' + cardAnim + (S.phase === 'wrong' ? ' a-shake' : '') + '"><span class="eyebrow">This card</span><span class="bignum card-num">' + n + '</span>' + (showDots ? frames(n, 'fc') : '') + '</div>' +
+        '<div class="' + signCls + signAnim + '" aria-hidden="true">' + sign + '</div>' +
+        '<div class="panel"><span class="eyebrow">Compare to</span><span class="bignum target-num">' + t + '</span>' + (showDots ? frames(t, 'ft') : '') + '</div>' +
+      '</div>' +
+      '<div class="bins">' +
+        '<button type="button" class="' + lessCls + '" data-action="less"' + (right ? ' disabled' : '') + '><span class="sym">&lt;</span><span class="lbl">less than ' + t + '</span></button>' +
+        '<button type="button" class="' + greatCls + '" data-action="greater"' + (right ? ' disabled' : '') + '><span class="sym">&gt;</span><span class="lbl">greater than ' + t + '</span></button>' +
+      '</div>' +
+      status + nextRow +
+      '</div>';
+
+    S.anim = '';
+    if (S.focus) {
+      var f = game.querySelector(S.focus);
+      if (f) f.focus();
+      S.focus = '';
+    }
+  }
+
+  function renderDone() {
+    var score = 0;
+    for (var i = 0; i < S.results.length; i++) if (S.results[i]) score++;
+    var msg = score === ROUND ? 'Perfect sort!' : score >= 6 ? 'Great sorting!' : 'Nice practice!';
+    game.innerHTML =
+      '<div class="panel done">' +
+        '<h2>' + msg + '</h2>' +
+        '<div class="score">' + score + ' of ' + ROUND + '</div>' +
+        '<p>right on the first try</p>' +
+        pips(true) +
+        '<p>Every card was compared to ' + S.target + '.</p>' +
+        '<button type="button" class="btn" data-action="again">Play again</button>' +
+      '</div>';
+    S.focus = '';
+  }
+
+  function answer(choice) {
+    if (S.phase === 'right' || S.phase === 'done') return;
+    var n = S.cards[S.idx];
+    var correct = (choice === 'less') === (n < S.target);
+    if (correct) {
+      S.results[S.idx] = S.wrong === 0;
+      S.phase = 'right';
+      S.focus = '[data-action="next"]';
+    } else {
+      S.wrong++;
+      S.phase = 'wrong';
+      S.reveal = true;
+      S.lastPick = choice;
+      S.focus = '[data-action="' + (choice === 'less' ? 'greater' : 'less') + '"]';
+    }
+    render();
+  }
+
+  function next() {
+    if (S.phase !== 'right') return;
+    S.idx++;
+    if (S.idx >= ROUND) { S.phase = 'done'; S.focus = '[data-action="again"]'; render(); return; }
+    S.phase = 'ask'; S.wrong = 0; S.reveal = false; S.lastPick = ''; S.anim = 'a-pop'; S.focus = '[data-action="less"]';
+    render();
+  }
+
+  document.addEventListener('click', function (e) {
+    var seg = e.target.closest('.seg button');
+    if (seg) {
+      var m = parseInt(seg.getAttribute('data-max'), 10);
+      if (m !== S.max) { S.max = m; save(); syncHeader(); newRound(); render(); }
+      return;
+    }
+    var b = e.target.closest('[data-action]');
+    if (!b || b.disabled) return;
+    var a = b.getAttribute('data-action');
+    if (a === 'less' || a === 'greater') answer(a);
+    else if (a === 'next') next();
+    else if (a === 'again') { newRound(); render(); }
+  });
+
+  dotsBox.addEventListener('change', function () {
+    S.dots = dotsBox.checked; save();
+    if (S.phase !== 'done') render();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = e.target && e.target.tagName;
+    if (tag === 'INPUT') return;
+    if (S.phase === 'done') return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); answer('less'); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); answer('greater'); }
+    else if (e.key === 'Enter' && S.phase === 'right' && tag !== 'BUTTON') { e.preventDefault(); next(); }
+  });
+
+  syncHeader();
+  newRound();
+  render();
+})();
+</script>
+
+</body></html>

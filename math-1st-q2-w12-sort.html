@@ -1,0 +1,707 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pumpkin Subtraction Sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Layout: one column. Pumpkin patch grid on top, a status strip, and a sticky dock of answer baskets pinned to the bottom so drag targets are always on screen. */
+:root {
+  --bg: #efe9f5;
+  --surface: #fbf8fd;
+  --fg: #2b1d38;
+  --muted: #62527a;
+  --line: #d6c9e4;
+  --hole: #e4d8ee;
+  --pk: #f08a1c;
+  --pk-dark: #b85a08;
+  --pk-light: #ffb24d;
+  --stem: #3f7d2e;
+  --accent: #6b3fa0;
+  --good: #1f7a41;
+  --warn: #b3321f;
+  --basket: #a9703a;
+  --basket-dark: #6f4520;
+  --weave: rgba(0, 0, 0, 0.2);
+  --seed: #f6e6b4;
+  --tag-bg: #fff7e8;
+  --tag-ink: #2b1405;
+  --shadow: rgba(43, 29, 56, 0.28);
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1226;
+    --surface: #2a1c39;
+    --fg: #f6eefc;
+    --muted: #bdaed0;
+    --line: #46345e;
+    --hole: #35244a;
+    --pk: #ff9a2e;
+    --pk-dark: #c4630a;
+    --pk-light: #ffc36d;
+    --stem: #7cc062;
+    --accent: #c9a5f2;
+    --good: #75d493;
+    --warn: #ff8f7e;
+    --basket: #b9803f;
+    --basket-dark: #7d4f25;
+    --weave: rgba(0, 0, 0, 0.28);
+    --seed: #f6e6b4;
+    --shadow: rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1226;
+  --surface: #2a1c39;
+  --fg: #f6eefc;
+  --muted: #bdaed0;
+  --line: #46345e;
+  --hole: #35244a;
+  --pk: #ff9a2e;
+  --pk-dark: #c4630a;
+  --pk-light: #ffc36d;
+  --stem: #7cc062;
+  --accent: #c9a5f2;
+  --good: #75d493;
+  --warn: #ff8f7e;
+  --basket: #b9803f;
+  --basket-dark: #7d4f25;
+  --weave: rgba(0, 0, 0, 0.28);
+  --seed: #f6e6b4;
+  --shadow: rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.4;
+  padding-inline: 16px;
+  padding-block: 20px 0;
+}
+.wrap {
+  max-width: 760px;
+  margin-inline: auto;
+  display: grid;
+  gap: 16px;
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 6.4vw, 2.6rem);
+  line-height: 1.05;
+  text-wrap: balance;
+  color: var(--pk-dark);
+}
+:root[data-theme="dark"] h1 { color: var(--pk); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) h1 { color: var(--pk); } }
+.lede {
+  margin: 6px 0 0;
+  max-width: 34em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.pips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pip {
+  padding: 6px 14px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--muted);
+  background: var(--surface);
+}
+.pip.is-now { background: var(--pk); border-color: var(--pk-dark); color: var(--tag-ink); }
+.pip.is-done { border-color: var(--good); color: var(--good); }
+.count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+.count svg { width: 22px; height: 22px; fill: var(--pk); stroke: var(--pk-dark); stroke-width: 1.5; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.helper { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.05rem; cursor: pointer; }
+.helper input { width: 24px; height: 24px; accent-color: var(--accent); cursor: pointer; }
+
+.tray {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 22px;
+}
+.slot { position: relative; aspect-ratio: 6 / 5; max-width: 100%; }
+.slot::before {
+  content: "";
+  position: absolute;
+  inset: 14% 8% 4%;
+  border-radius: 50%;
+  background: var(--hole);
+}
+.pumpkin {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background: none;
+  color: inherit;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.15s ease;
+}
+.pumpkin svg { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.pumpkin:hover { transform: translateY(-3px); }
+.pumpkin:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.pumpkin.selected { outline: 4px solid var(--accent); outline-offset: 3px; transform: translateY(-4px); }
+.pumpkin.dragging {
+  z-index: 30;
+  cursor: grabbing;
+  transition: none;
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(1.1);
+  filter: drop-shadow(0 12px 8px var(--shadow));
+}
+.pumpkin.returning { transition: transform 0.22s ease; transform: translate(0, 0); }
+.pumpkin.shake { animation: shake 0.42s ease; }
+.pumpkin.gone { visibility: hidden; }
+.lobe { stroke: var(--pk-dark); stroke-width: 2.5; }
+.lobe-side { fill: var(--pk-dark); }
+.lobe-mid { fill: var(--pk); }
+.lobe-center { fill: var(--pk-light); }
+.stem { fill: var(--stem); }
+.vine { fill: none; stroke: var(--stem); stroke-width: 3; stroke-linecap: round; }
+.eq {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  padding: 0.05em 0.45em;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 5.2vw, 1.9rem);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.status {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 6.2rem;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 18px;
+}
+.msg { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; line-height: 1.25; }
+.msg.ok { color: var(--good); }
+.msg.try { color: var(--warn); }
+.seeds { display: flex; flex-wrap: wrap; gap: 6px; min-height: 22px; }
+.seed {
+  position: relative;
+  width: 14px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--seed);
+  border: 2px solid var(--pk-dark);
+}
+.seed.out { opacity: 0.4; }
+.seed.out::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  right: -5px;
+  top: 50%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--warn);
+  transform: rotate(-35deg);
+}
+
+.done {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 20px;
+  background: var(--surface);
+  border: 2px solid var(--pk-dark);
+  border-radius: 22px;
+}
+.done h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 6vw, 2.2rem); line-height: 1.1; text-wrap: balance; }
+.done p { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--muted); }
+.btn {
+  min-height: 48px;
+  padding: 0.55em 1.4em;
+  border: 2px solid var(--pk-dark);
+  border-radius: 999px;
+  background: var(--pk);
+  color: var(--tag-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn:hover { background: var(--pk-light); }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); font-size: 1rem; }
+.btn.ghost:hover { background: var(--surface); }
+
+.dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 2px solid var(--line);
+}
+.baskets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.basket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 14px;
+}
+.basket:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 9vw, 3rem);
+  line-height: 1;
+  padding-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.basket-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  min-height: clamp(88px, 24vw, 120px);
+  padding: 8px 5px 10px;
+  border-top: 10px solid var(--basket-dark);
+  border-radius: 8px 8px 28px 28px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 20px, var(--weave) 20px 23px),
+    repeating-linear-gradient(90deg, var(--basket) 0 14px, var(--basket-dark) 14px 17px);
+}
+.basket.over .basket-body,
+.basket.bump .basket-body { outline: 4px solid var(--accent); outline-offset: 3px; }
+.basket.bump { animation: bump 0.4s ease; }
+.has-selection .basket:hover .basket-body { outline: 3px dashed var(--accent); outline-offset: 3px; }
+.chip {
+  padding: 0.1em 0.5em;
+  border: 2px solid var(--pk-dark);
+  border-radius: 999px;
+  background: var(--pk);
+  color: var(--tag-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  line-height: 1.3;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  animation: pop 0.35s ease;
+}
+
+.confetti { position: fixed; inset: 0; z-index: 100; overflow: hidden; pointer-events: none; }
+.confetti span {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  animation: fall 1.7s ease-in forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px) rotate(-3deg); }
+  40% { transform: translateX(9px) rotate(3deg); }
+  60% { transform: translateX(-6px) rotate(-2deg); }
+  80% { transform: translateX(6px) rotate(2deg); }
+}
+@keyframes pop { 0% { transform: scale(0.3); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes bump { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } }
+@keyframes fall { to { transform: translate(var(--x, 0px), 110vh) rotate(560deg); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>Pumpkin Subtraction Sort</h1>
+    <p class="lede">Each pumpkin has a subtraction problem. Drag it to the basket with the answer.</p>
+  </header>
+
+  <div class="meta">
+    <ol class="pips" id="pips" aria-label="Rounds"></ol>
+    <div class="count" aria-live="polite">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.2 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+      <span id="count">Sorted 0 of 9</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label class="helper" for="helper"><input type="checkbox" id="helper"> Seed helper</label>
+    <button type="button" class="btn ghost" id="restart">Start over</button>
+  </div>
+
+  <section class="tray" id="tray" aria-label="Pumpkin patch"></section>
+  <section class="done" id="done" hidden></section>
+
+  <div class="status">
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    <div class="seeds" id="seeds" aria-hidden="true"></div>
+  </div>
+
+  <div class="dock">
+    <div class="baskets" id="baskets" aria-label="Answer baskets"></div>
+  </div>
+</main>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script>
+(function () {
+  var ROUNDS = [
+    { answers: [1, 2, 3], maxM: 6 },
+    { answers: [2, 3, 4], maxM: 8 },
+    { answers: [3, 5, 7], maxM: 10 }
+  ];
+  var PER_BASKET = 3;
+  var PUMPKIN_SVG =
+    '<svg viewBox="0 0 120 100" aria-hidden="true">' +
+    '<path class="stem" d="M55 20 C54 9 60 4 69 2 C68 9 66 14 67 21 Z"/>' +
+    '<path class="vine" d="M68 6 C80 -3 94 4 90 14"/>' +
+    '<ellipse class="lobe lobe-side" cx="30" cy="58" rx="26" ry="34"/>' +
+    '<ellipse class="lobe lobe-side" cx="90" cy="58" rx="26" ry="34"/>' +
+    '<ellipse class="lobe lobe-mid" cx="46" cy="58" rx="28" ry="38"/>' +
+    '<ellipse class="lobe lobe-mid" cx="74" cy="58" rx="28" ry="38"/>' +
+    '<ellipse class="lobe lobe-center" cx="60" cy="58" rx="22" ry="40"/>' +
+    '</svg>';
+
+  function $(s) { return document.querySelector(s); }
+  var tray = $('#tray'), baskets = $('#baskets'), msg = $('#msg'), seedsEl = $('#seeds');
+  var done = $('#done'), pips = $('#pips'), countEl = $('#count'), helper = $('#helper');
+  var confetti = $('#confetti');
+
+  var roundIdx = 0, items = [], selectedId = null, placedCount = 0;
+  var firstTry = 0, totalFirstTry = 0, totalItems = 0, drag = null, overEl = null;
+
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function buildItems() {
+    var r = ROUNDS[roundIdx], out = [], id = 0;
+    r.answers.forEach(function (ans) {
+      var cands = [];
+      for (var m = ans + 1; m <= r.maxM; m++) cands.push([m, m - ans]);
+      shuffle(cands).slice(0, PER_BASKET).forEach(function (c) {
+        out.push({ id: id++, a: c[0], b: c[1], answer: ans, tries: 0, placed: false });
+      });
+    });
+    return shuffle(out);
+  }
+
+  function renderPips() {
+    pips.innerHTML = ROUNDS.map(function (r, i) {
+      var cls = i < roundIdx ? 'is-done' : (i === roundIdx ? 'is-now' : '');
+      return '<li class="pip ' + cls + '"' + (i === roundIdx ? ' aria-current="step"' : '') + '>Round ' + (i + 1) + '</li>';
+    }).join('');
+  }
+
+  function renderBaskets() {
+    baskets.innerHTML = ROUNDS[roundIdx].answers.map(function (n) {
+      return '<button type="button" class="basket" data-answer="' + n + '" aria-label="Basket for ' + n + '">' +
+        '<span class="num">' + n + '</span><span class="basket-body"></span></button>';
+    }).join('');
+  }
+
+  function renderTray() {
+    tray.innerHTML = items.map(function (it) {
+      return '<div class="slot"><button type="button" class="pumpkin" data-id="' + it.id +
+        '" aria-label="' + it.a + ' minus ' + it.b + '">' + PUMPKIN_SVG +
+        '<span class="eq">' + it.a + ' − ' + it.b + '</span></button></div>';
+    }).join('');
+  }
+
+  function setMsg(text, kind) {
+    msg.textContent = text;
+    msg.className = 'msg' + (kind ? ' ' + kind : '');
+  }
+
+  function updateCount() {
+    countEl.textContent = 'Sorted ' + placedCount + ' of ' + items.length;
+  }
+
+  function findItem(id) {
+    for (var i = 0; i < items.length; i++) if (items[i].id === id) return items[i];
+    return null;
+  }
+
+  function renderSeeds() {
+    seedsEl.innerHTML = '';
+    var it = findItem(selectedId);
+    if (!helper.checked || !it) return;
+    var html = '';
+    for (var i = 0; i < it.a; i++) {
+      html += '<span class="seed' + (i >= it.a - it.b ? ' out' : '') + '"></span>';
+    }
+    seedsEl.innerHTML = html;
+  }
+
+  function idleMsg() {
+    setMsg('Tap a pumpkin, then tap its basket. Or drag it there.');
+  }
+
+  function select(id) {
+    selectedId = id;
+    var els = tray.querySelectorAll('.pumpkin');
+    for (var i = 0; i < els.length; i++) {
+      els[i].classList.toggle('selected', +els[i].getAttribute('data-id') === id);
+    }
+    document.body.classList.toggle('has-selection', id !== null);
+    var it = findItem(id);
+    if (it) {
+      if (helper.checked) {
+        setMsg('Start with ' + it.a + ' seeds. Take away ' + it.b + '. How many are left?');
+      } else {
+        setMsg('What is ' + it.a + ' − ' + it.b + '? Put it in the right basket.');
+      }
+    } else {
+      idleMsg();
+    }
+    renderSeeds();
+  }
+
+  function basketAt(x, y) {
+    var stack = document.elementsFromPoint(x, y);
+    for (var i = 0; i < stack.length; i++) {
+      var b = stack[i].closest && stack[i].closest('.basket');
+      if (b) return b;
+    }
+    return null;
+  }
+
+  function setOver(b) {
+    if (overEl === b) return;
+    if (overEl) overEl.classList.remove('over');
+    overEl = b;
+    if (overEl) overEl.classList.add('over');
+  }
+
+  function burst() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var colors = ['var(--pk)', 'var(--pk-light)', 'var(--stem)', 'var(--accent)'];
+    var html = '';
+    for (var i = 0; i < 36; i++) {
+      html += '<span style="left:' + (Math.random() * 100) + '%;background:' + colors[i % colors.length] +
+        ';--x:' + Math.round((Math.random() - 0.5) * 160) + 'px;animation-delay:' + (Math.random() * 0.4).toFixed(2) + 's"></span>';
+    }
+    confetti.innerHTML = html;
+    setTimeout(function () { confetti.innerHTML = ''; }, 2400);
+  }
+
+  function attempt(id, answer) {
+    var it = findItem(id);
+    if (!it || it.placed) return;
+    var pEl = tray.querySelector('.pumpkin[data-id="' + id + '"]');
+    var bEl = baskets.querySelector('.basket[data-answer="' + answer + '"]');
+    if (it.answer === answer) {
+      it.placed = true;
+      placedCount++;
+      if (it.tries === 0) { firstTry++; totalFirstTry++; }
+      if (pEl) { pEl.classList.add('gone'); pEl.classList.remove('selected', 'dragging', 'returning'); }
+      var chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = it.a + ' − ' + it.b;
+      bEl.querySelector('.basket-body').appendChild(chip);
+      bEl.classList.remove('bump');
+      void bEl.offsetWidth;
+      bEl.classList.add('bump');
+      setTimeout(function () { bEl.classList.remove('bump'); }, 450);
+      selectedId = null;
+      document.body.classList.remove('has-selection');
+      renderSeeds();
+      setMsg(it.a + ' − ' + it.b + ' = ' + it.answer + '. Nice sorting!', 'ok');
+      updateCount();
+      if (placedCount === items.length) setTimeout(finishRound, 700);
+    } else {
+      it.tries++;
+      if (pEl) {
+        pEl.classList.remove('shake');
+        void pEl.offsetWidth;
+        pEl.classList.add('shake');
+        setTimeout(function () { pEl.classList.remove('shake'); }, 450);
+      }
+      if (it.tries >= 2) {
+        setMsg('Try counting back ' + it.b + ' from ' + it.a + '.', 'try');
+      } else {
+        setMsg('Not that basket. Try another one.', 'try');
+      }
+    }
+  }
+
+  function finishRound() {
+    var last = roundIdx === ROUNDS.length - 1;
+    tray.hidden = true;
+    var html;
+    if (!last) {
+      html = '<h2>Round ' + (roundIdx + 1) + ' done!</h2>' +
+        '<p>' + firstTry + ' of ' + items.length + ' pumpkins landed in the right basket on the first try.</p>' +
+        '<button type="button" class="btn" id="next">Next round</button>';
+    } else {
+      html = '<h2>All the pumpkins are sorted!</h2>' +
+        '<p>' + totalFirstTry + ' of ' + totalItems + ' pumpkins went in the right basket on the first try.</p>' +
+        '<button type="button" class="btn" id="again">Play again</button>';
+    }
+    done.innerHTML = html;
+    done.hidden = false;
+    setMsg(last ? 'Great subtracting!' : 'Ready for the next patch?', 'ok');
+    burst();
+    var nextBtn = $('#next'), againBtn = $('#again');
+    if (nextBtn) nextBtn.addEventListener('click', function () { roundIdx++; startRound(); });
+    if (againBtn) againBtn.addEventListener('click', restart);
+    var focusEl = nextBtn || againBtn;
+    if (focusEl) focusEl.focus({ preventScroll: true });
+  }
+
+  function startRound() {
+    items = buildItems();
+    totalItems = roundIdx === 0 ? items.length : totalItems + items.length;
+    placedCount = 0;
+    firstTry = 0;
+    selectedId = null;
+    done.hidden = true;
+    tray.hidden = false;
+    document.body.classList.remove('has-selection');
+    renderPips();
+    renderBaskets();
+    renderTray();
+    renderSeeds();
+    updateCount();
+    idleMsg();
+  }
+
+  function restart() {
+    roundIdx = 0;
+    totalFirstTry = 0;
+    totalItems = 0;
+    startRound();
+  }
+
+  tray.addEventListener('pointerdown', function (e) {
+    var el = e.target.closest('.pumpkin');
+    if (!el || el.classList.contains('gone')) return;
+    if (e.button !== undefined && e.button !== 0) return;
+    var id = +el.getAttribute('data-id');
+    select(id);
+    drag = { el: el, id: id, sx: e.clientX, sy: e.clientY, moved: false, pid: e.pointerId };
+    el.classList.remove('returning');
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  tray.addEventListener('pointermove', function (e) {
+    if (!drag || e.pointerId !== drag.pid) return;
+    var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    if (!drag.moved && Math.sqrt(dx * dx + dy * dy) < 8) return;
+    drag.moved = true;
+    drag.el.classList.add('dragging');
+    drag.el.style.setProperty('--dx', dx + 'px');
+    drag.el.style.setProperty('--dy', dy + 'px');
+    setOver(basketAt(e.clientX, e.clientY));
+  });
+
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.pid) return;
+    var d = drag;
+    drag = null;
+    setOver(null);
+    if (!d.moved) return;
+    var target = e.type === 'pointerup' ? basketAt(e.clientX, e.clientY) : null;
+    d.el.classList.remove('dragging');
+    d.el.classList.add('returning');
+    d.el.style.setProperty('--dx', '0px');
+    d.el.style.setProperty('--dy', '0px');
+    setTimeout(function () { d.el.classList.remove('returning'); }, 260);
+    if (target) attempt(d.id, +target.getAttribute('data-answer'));
+  }
+  tray.addEventListener('pointerup', endDrag);
+  tray.addEventListener('pointercancel', endDrag);
+
+  tray.addEventListener('click', function (e) {
+    var el = e.target.closest('.pumpkin');
+    if (!el || el.classList.contains('gone')) return;
+    if (e.detail === 0) select(+el.getAttribute('data-id'));
+  });
+
+  baskets.addEventListener('click', function (e) {
+    var b = e.target.closest('.basket');
+    if (!b) return;
+    if (selectedId === null) {
+      setMsg('Pick a pumpkin first, then choose its basket.', 'try');
+      return;
+    }
+    attempt(selectedId, +b.getAttribute('data-answer'));
+  });
+
+  helper.addEventListener('change', function () {
+    select(selectedId);
+  });
+  $('#restart').addEventListener('click', restart);
+
+  restart();
+})();
+</script>
+
+</body></html>
