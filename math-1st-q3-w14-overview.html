@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Optima Academy Online &ndash; Math Grade 1: A Forest of Friends Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito','Century Gothic','Arial Rounded MT Bold',Verdana,sans-serif;background:#F2F0E8;color:#2B1D12;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page-wrap{max-width:920px;margin:0 auto;background:#FAF8F4;box-shadow:0 0 40px rgba(0,0,0,0.07);position:relative;overflow:visible}
+.paint-border{height:8px;background:linear-gradient(90deg,#FF7043 0%,#FF7043 12.5%,#FFB74D 12.5%,#FFB74D 25%,#FFF176 25%,#FFF176 37.5%,#81C784 37.5%,#81C784 50%,#4DD0E1 50%,#4DD0E1 62.5%,#7986CB 62.5%,#7986CB 75%,#CE93D8 75%,#CE93D8 87.5%,#F48FB1 87.5%,#F48FB1 100%)}
+.header{background:linear-gradient(135deg,#0E1C42 0%,#1A2D5A 60%,#243868 100%);border-bottom:6px solid #0288D1;padding:22px 28px 24px;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#FF7043,#FFB74D,#FFF176,#81C784,#4DD0E1,#7986CB,#CE93D8)}
+.header-brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.header-logo{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.header-logo img{width:48px;height:38px}
+.header-org{font-size:22px;color:#fff;font-weight:800;line-height:1.15}
+.header-sub{font-size:11px;color:#55C8E8;letter-spacing:0.5px}
+.header-title{font-size:28px;color:#fff;font-weight:900;line-height:1.15;margin-bottom:6px}
+.header-week{font-size:15px;color:#A8D0E6;font-weight:600}
+.info-strip{display:flex;flex-wrap:wrap;background:#fff;border-bottom:2px solid #E8DDD2;justify-content:center;position:relative;z-index:10;overflow:visible}
+.info-item{flex:1;min-width:200px;padding:16px 20px;border-right:1px solid #E8DDD2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;overflow:visible}
+.info-item:last-child{border-right:none}
+.info-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.info-label{font-size:10px;color:#9A8E82;text-transform:uppercase;letter-spacing:0.5px;font-weight:700}
+.info-value{font-size:15px;color:#1B4332;font-weight:800;line-height:1.2}
+.info-detail{font-size:11px;color:#5A4D3E;line-height:1.3}
+.content{padding:24px 28px 36px}
+.art-divider{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0 18px;font-size:22px;opacity:0.6}
+.card{background:#fff;border:2px solid #E8DDD2;border-radius:18px;margin-bottom:22px;overflow:hidden;box-shadow:0 2px 12px rgba(27,67,50,0.04)}
+.card-head{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:2px solid}
+.card-head-icon{width:42px;height:42px;border-radius:50%;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-head-label{font-size:10px;color:#9A8E82;text-transform:uppercase;letter-spacing:0.8px;font-weight:700}
+.card-head-title{font-size:20px;color:#1B4332;font-weight:800;line-height:1.2}
+.card-body{padding:18px 22px}
+.card-body p{font-size:17px;color:#5A4D3E;line-height:1.75;margin-bottom:12px}
+.card-body p:last-child{margin-bottom:0}
+.theme-forest .card-head{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-color:#A5D6A7}
+.theme-forest .card-head-icon{background:linear-gradient(135deg,#2E7D32,#43A047)}
+.theme-sky .card-head{background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border-color:#81D4FA}
+.theme-sky .card-head-icon{background:linear-gradient(135deg,#0277BD,#0288D1)}
+.theme-sun .card-head{background:linear-gradient(135deg,#FFF8E1,#FFECB3);border-color:#FFD54F}
+.theme-sun .card-head-icon{background:linear-gradient(135deg,#F57F17,#F9A825)}
+.theme-coral .card-head{background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-color:#FFCC80}
+.theme-coral .card-head-icon{background:linear-gradient(135deg,#E64A19,#FF7043)}
+.theme-purple .card-head{background:linear-gradient(135deg,#F3E5F5,#E1BEE7);border-color:#CE93D8}
+.theme-purple .card-head-icon{background:linear-gradient(135deg,#6A1B9A,#8E24AA)}
+.eq-box{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border:2px solid #A5D6A7;border-radius:16px;padding:18px 20px;display:flex;align-items:flex-start;gap:12px}
+.eq-icon{font-size:30px;flex-shrink:0;line-height:1}
+.eq-label{font-size:11px;color:#2D6A4F;text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:4px}
+.eq-question{font-size:19px;color:#2B1D12;font-weight:700;line-height:1.6;font-style:italic}
+.ican-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:#FAFAF6;border-radius:14px;margin-bottom:10px;border:1.5px solid #E8DDD2}
+.ican-item:last-child{margin-bottom:0}
+.ican-num{width:34px;height:34px;border-radius:50%;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.12)}
+.ican-text{font-size:17px;color:#1B4332;line-height:1.6;padding-top:4px}
+.vocab-box{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0}
+.vocab-tag{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border:2px solid #81D4FA;border-radius:30px;padding:8px 18px;font-size:16px;font-weight:800;color:#0277BD}
+.vocab-grid{display:flex;flex-wrap:wrap;gap:14px;padding:4px 0}
+.vocab-flip{width:160px;height:120px;perspective:600px;cursor:pointer}
+.vocab-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d}
+.vocab-flip:hover .vocab-inner,.vocab-flip.flipped .vocab-inner{transform:rotateY(180deg)}
+.vocab-front,.vocab-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+.vocab-front{background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border:2px solid #81D4FA}
+.vocab-front .vf-emoji{font-size:28px;margin-bottom:4px}
+.vocab-front .vf-word{font-size:17px;font-weight:800;color:#0277BD}
+.vocab-front .vf-hint{font-size:10px;color:#5A4D3E;margin-top:4px;opacity:0.7}
+.vocab-back{background:linear-gradient(135deg,#FFF8E1,#FFECB3);border:2px solid #FFD54F;transform:rotateY(180deg);font-size:13px;color:#5A4D3E;line-height:1.45;font-weight:600}
+.reflection-box{background:linear-gradient(135deg,#F3E5F5,#E1BEE7);border:2px solid #CE93D8;border-radius:16px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px}
+.ref-text{font-size:17px;color:#2B1D12;line-height:1.7;font-style:italic}
+.callout{border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.callout-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.callout p{font-size:16px;color:#2B1D12;line-height:1.65;margin:0}
+.callout-family{background:linear-gradient(135deg,#FFF8E1,#FFECB3);border:2px solid #FFD54F}
+.std-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.3px;position:relative;cursor:help;transition:transform 0.15s,box-shadow 0.15s}
+.std-tag:hover{transform:scale(1.08);box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+.std-tag .std-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:220px;background:#1B4332;color:#fff;font-size:12px;font-weight:600;line-height:1.45;padding:10px 14px;border-radius:12px;text-align:center;letter-spacing:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.2s,visibility 0.2s,transform 0.2s;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.2)}
+.std-tag .std-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1B4332}
+.std-tag:hover .std-tooltip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-2px)}
+.std-tag .std-tooltip .std-code{display:block;color:#95D5B2;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:800}
+.std-tag:nth-child(8n+1){background:#FCE4EC;border:1.5px solid #F48FB1;color:#C2185B}
+.std-tag:nth-child(8n+2){background:#E8F5E9;border:1.5px solid #A5D6A7;color:#2E7D32}
+.std-tag:nth-child(8n+3){background:#E1F5FE;border:1.5px solid #81D4FA;color:#0277BD}
+.std-tag:nth-child(8n+4){background:#FFF8E1;border:1.5px solid #FFD54F;color:#F57F17}
+.std-tag:nth-child(8n+5){background:#F3E5F5;border:1.5px solid #CE93D8;color:#6A1B9A}
+.std-tag:nth-child(8n+6){background:#FFF3E0;border:1.5px solid #FFCC80;color:#E65100}
+.std-tag:nth-child(8n+7){background:#E0F7FA;border:1.5px solid #80DEEA;color:#00838F}
+.std-tag:nth-child(8n+8){background:#F1F8E9;border:1.5px solid #AED581;color:#558B2F}
+.rainbow-frame{border:4px solid transparent;border-radius:20px;padding:6px;background:linear-gradient(#FAF8F4,#FAF8F4) padding-box,linear-gradient(90deg,#FF7043,#FFB74D,#FFF176,#81C784,#4DD0E1,#7986CB,#CE93D8,#F48FB1) border-box;margin-top:4px}
+.rainbow-frame iframe{width:100%;border:none;border-radius:14px;min-height:520px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.footer{background:#0E1C42;color:rgba(255,255,255,0.5);text-align:center;padding:16px;font-size:12px;font-weight:600}
+.footer a{color:#55C8E8;text-decoration:none}
+@media(max-width:680px){.two-col{grid-template-columns:1fr}.info-strip{flex-direction:column}.info-item{border-right:none;border-bottom:1px solid #E8DDD2}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     OPTIMA READ-ALOUD PLAYER — drop-in snippet for GitHub-hosted lesson pages
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="optima-read-aloud">
+<style>
+    #optima-read-aloud { background: linear-gradient(135deg, #E8F6FB 0%, #F4F9FC 100%); border: 1px solid #C5DCE5; border-left: 5px solid #2196D0; border-radius: 8px; padding: 14px 18px; margin: 0 0 20px 0; }
+    #optima-read-aloud .ora-kicker { font-size: 11px; color: #1B6A94; letter-spacing: 0.4px; margin-bottom: 10px; }
+    #optima-read-aloud .ora-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    #optima-read-aloud .ora-controls button { border-radius: 8px; padding: 8px 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    #ora-play { background: #0E1C42; color: #FFFFFF; border: 1.5px solid #0E1C42; }
+    #ora-play:hover:enabled { background: #1B2D5E; }
+    #ora-play:disabled { background: #D0D9E8; border-color: #D0D9E8; color: #6b7a99; cursor: default; }
+    #ora-stop { background: #FFFFFF; color: #0E1C42; border: 1.5px solid #D0D9E8; }
+    #ora-stop:hover:enabled { background: #F4F6FA; border-color: #55C8E8; }
+    #ora-stop:disabled { color: #999; border-color: #E4E9F2; cursor: default; }
+    #optima-read-aloud .ora-speed { font-size: 12px; color: #6b7a99; display: flex; align-items: center; gap: 6px; }
+    #ora-rate { font-family: inherit; font-size: 13px; color: #0E1C42; border: 1.5px solid #D0D9E8; border-radius: 6px; padding: 5px 8px; background: #FFFFFF; }
+    #ora-status { font-size: 12px; color: #666; }
+    .ora-highlight { background: #FDF3E3 !important; box-shadow: inset 4px 0 0 #C7922C; border-radius: 4px; transition: background 0.2s; }
+</style>
+    <div class="ora-kicker">&#128266; READ ALOUD &mdash; LISTEN TO THIS PAGE</div>
+    <div class="ora-controls">
+        <button id="ora-play" type="button" aria-label="Listen to this page">&#9654;&#65039; Listen</button>
+        <button id="ora-stop" type="button" aria-label="Stop reading" disabled>&#9632; Stop</button>
+        <label class="ora-speed">Speed
+            <select id="ora-rate" aria-label="Reading speed">
+                <option value="0.8">Slower</option>
+                <option value="1" selected>Normal</option>
+                <option value="1.25">Faster</option>
+            </select>
+        </label>
+        <span id="ora-status" role="status" aria-live="polite"></span>
+    </div>
+<script>
+(function () {
+    "use strict";
+    var playBtn  = document.getElementById("ora-play");
+    var stopBtn  = document.getElementById("ora-stop");
+    var rateSel  = document.getElementById("ora-rate");
+    var statusEl = document.getElementById("ora-status");
+
+    if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+        playBtn.disabled = true;
+        rateSel.disabled = true;
+        statusEl.textContent = "Read-aloud is not supported in this browser.";
+        return;
+    }
+
+    var LABEL_PLAY   = "▶️ Listen";
+    var LABEL_PAUSE  = "⏸️ Pause";
+    var LABEL_RESUME = "▶️ Resume";
+    var BLOCK_SEL = "p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th, dt, dd, figcaption, div";
+    var SKIP_SEL  = "#optima-read-aloud, [data-ra-skip], button, script, style, select, noscript, iframe";
+
+    var queue = [];
+    var idx = 0;
+    var playing = false, paused = false, stopping = false;
+    var currentBlock = null;
+    var currentUtterance = null;
+
+    var voices = [];
+    function loadVoices() { voices = window.speechSynthesis.getVoices(); }
+    loadVoices();
+    if ("onvoiceschanged" in window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    function pickVoice() {
+        if (!voices.length) loadVoices();
+        var en = voices.filter(function (v) { return /^en/i.test(v.lang); });
+        return en.filter(function (v) { return /natural/i.test(v.name); })[0]
+            || en.filter(function (v) { return /google us english/i.test(v.name); })[0]
+            || en.filter(function (v) { return v.default; })[0]
+            || en[0] || null;
+    }
+
+    function isVisible(el) {
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    }
+
+    function collectQueue() {
+        var root = document.querySelector("[data-readaloud-root]")
+                || document.querySelector(".canvas-frame")
+                || document.body;
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+        var items = [];
+        var node;
+        while ((node = walker.nextNode())) {
+            if (!/\S/.test(node.textContent)) continue;
+            var el = node.parentElement;
+            if (!el || el.closest(SKIP_SEL)) continue;
+            if (!isVisible(el)) continue;
+            var block = el.closest(BLOCK_SEL) || root;
+            var last = items[items.length - 1];
+            if (last && last.el === block) last.text += " " + node.textContent;
+            else items.push({ el: block, text: node.textContent });
+        }
+        var q = [];
+        items.forEach(function (item) {
+            var clean = item.text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{25A0}-\u{25FF}\u{2702}-\u{27B0}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, "").replace(/\s+/g, " ").trim();
+            if (!clean) return;
+            var sentences = clean.match(/[^.!?]+[.!?]+[""'')\]]*\s*|[^.!?]+$/g) || [clean];
+            sentences.forEach(function (s) {
+                s = s.trim();
+                if (s) q.push({ el: item.el, text: s });
+            });
+        });
+        return q;
+    }
+
+    function highlight(el) {
+        if (el === currentBlock) return;
+        clearHighlight();
+        currentBlock = el;
+        if (el && el !== document.body) {
+            el.classList.add("ora-highlight");
+            try { el.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (e) {}
+        }
+    }
+    function clearHighlight() {
+        if (currentBlock) currentBlock.classList.remove("ora-highlight");
+        currentBlock = null;
+    }
+
+    function speakNext() {
+        if (idx >= queue.length) { finish("Finished reading this page."); return; }
+        var item = queue[idx];
+        highlight(item.el);
+        var u = new SpeechSynthesisUtterance(item.text);
+        u.rate = parseFloat(rateSel.value) || 1;
+        var v = pickVoice();
+        if (v) u.voice = v;
+        u.onend = function () {
+            if (stopping) return;
+            idx++;
+            speakNext();
+        };
+        u.onerror = function (e) {
+            if (stopping || e.error === "canceled" || e.error === "interrupted") return;
+            idx++;
+            speakNext();
+        };
+        currentUtterance = u;
+        window.speechSynthesis.speak(u);
+        statusEl.textContent = "Reading… " + (idx + 1) + " / " + queue.length;
+    }
+
+    function finish(message) {
+        playing = false;
+        paused = false;
+        clearHighlight();
+        playBtn.textContent = LABEL_PLAY;
+        stopBtn.disabled = true;
+        statusEl.textContent = message || "";
+        currentUtterance = null;
+    }
+
+    playBtn.addEventListener("click", function () {
+        if (playing && !paused) {
+            window.speechSynthesis.pause();
+            paused = true;
+            playBtn.textContent = LABEL_RESUME;
+            statusEl.textContent = "Paused";
+            return;
+        }
+        if (playing && paused) {
+            window.speechSynthesis.resume();
+            paused = false;
+            playBtn.textContent = LABEL_PAUSE;
+            statusEl.textContent = "Reading… " + (idx + 1) + " / " + queue.length;
+            return;
+        }
+        queue = collectQueue();
+        if (!queue.length) { statusEl.textContent = "Nothing to read on this page."; return; }
+        idx = 0;
+        stopping = false;
+        playing = true;
+        paused = false;
+        window.speechSynthesis.cancel();
+        playBtn.textContent = LABEL_PAUSE;
+        stopBtn.disabled = false;
+        speakNext();
+    });
+
+    stopBtn.addEventListener("click", function () {
+        stopping = true;
+        window.speechSynthesis.cancel();
+        finish("");
+    });
+
+    rateSel.addEventListener("change", function () {
+        if (!playing || paused) return;
+        stopping = true;
+        window.speechSynthesis.cancel();
+        setTimeout(function () { stopping = false; speakNext(); }, 60);
+    });
+
+    window.addEventListener("pagehide", function () { window.speechSynthesis.cancel(); });
+})();
+</script>
+</div>
+<!-- ═══ END OPTIMA READ-ALOUD PLAYER ═══ -->
+
+<div class="paint-border"></div>
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" /></div>
+    <div><div class="header-org">Optima Academy Online</div><div class="header-sub">An Education Experience Company</div></div>
+  </div>
+  <div class="header-title">Math &middot; Grade 1</div>
+  <div class="header-week">A Forest of Friends</div>
+</div>
+<div class="info-strip">
+  <div class="info-item">
+    <div class="info-icon" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">&#x1F4C5;</div>
+    <div class="info-label">Theme</div>
+    <div class="info-value">A Forest of Friends</div>
+  </div>
+  <div class="info-item">
+    <div class="info-icon" style="background:linear-gradient(135deg,#E1F5FE,#B3E5FC);">&#x1F9EE;</div>
+    <div class="info-label">Math Focus</div>
+    <div class="info-value">Ordinal Numbers</div>
+    <div class="info-detail">Understanding position words like first, second, third</div>
+  </div>
+  <div class="info-item">
+    <div class="info-icon" style="background:linear-gradient(135deg,#F3E5F5,#E1BEE7);">&#x1F4CB;</div>
+    <div class="info-label">Standards</div>
+    <div style="margin-top:4px;"><span class="std-tag">MA.1.NSO.1.3<span class="std-tooltip"><span class="std-code">MA.1.NSO.1.3</span>Compose and decompose two-digit numbers in multiple ways using tens and ones. Demonstrate each composition or decomposition with objects, drawings and expressions or equations.</span></span> <span class="std-tag">MA.1.NSO.1.4<span class="std-tooltip"><span class="std-code">MA.1.NSO.1.4</span>Plot, order and compare whole numbers up to 100.</span></span> <span class="std-tag">MA.1.NSO.2.1<span class="std-tooltip"><span class="std-code">MA.1.NSO.2.1</span>Recall addition facts with sums to 10 and related subtraction facts with automaticity.</span></span> <span class="std-tag">MA.1.NSO.2.2<span class="std-tooltip"><span class="std-code">MA.1.NSO.2.2</span>Add two whole numbers with sums from 0 to 20, and subtract using a related fact.</span></span> <span class="std-tag">MA.1.NSO.2.3<span class="std-tooltip"><span class="std-code">MA.1.NSO.2.3</span>Identify the number that is one more, one less, ten more and ten less than a given two-digit number.</span></span> <span class="std-tag">MA.1.NSO.2.4<span class="std-tooltip"><span class="std-code">MA.1.NSO.2.4</span>Explore subtraction of two whole numbers with differences from 0 to 20.</span></span></div>
+  </div>
+</div>
+<div class="content">
+  <div class="art-divider">&#x1F332; &#x1F43B; &#x1F33F; &#x1F9EE; &#x2B50; &#x1F43F;&#xFE0F; &#x1F333;</div>
+
+  <div class="two-col">
+    <div class="card theme-forest">
+      <div class="card-head">
+        <div class="card-head-icon">&#x2728;</div>
+        <div><div class="card-head-label">Essential Question</div><div class="card-head-title">Our Big Question</div></div>
+      </div>
+      <div class="card-body">
+        <div class="eq-box">
+          <span class="eq-icon">&#x1F914;</span>
+          <div>
+            <div class="eq-label">Think About This&hellip;</div>
+            <div class="eq-question">&ldquo;How can ordinal numbers help us tell the position of something and solve problems about order?&rdquo;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card theme-sky">
+      <div class="card-head">
+        <div class="card-head-icon">&#x1F3AF;</div>
+        <div><div class="card-head-label">Objectives</div><div class="card-head-title">I Can Statements</div></div>
+      </div>
+      <div class="card-body">
+        <div class="ican-item"><div class="ican-num" style="background:linear-gradient(135deg,#FF7043,#FF8A65);">1</div><div class="ican-text"><strong>I can</strong> name positions using ordinal words like first, second, third, fourth, and fifth, up to tenth.</div></div>
+        <div class="ican-item"><div class="ican-num" style="background:linear-gradient(135deg,#7E57C2,#9575CD);">2</div><div class="ican-text"><strong>I can</strong> tell the difference between a number that tells how many (5) and an ordinal number that tells position (fifth).</div></div>
+        <div class="ican-item"><div class="ican-num" style="background:linear-gradient(135deg,#26A69A,#4DB6AC);">3</div><div class="ican-text"><strong>I can</strong> write and say ordinal numbers to explain where something is.</div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card theme-coral">
+    <div class="card-head">
+      <div class="card-head-icon">&#x1F4D6;</div>
+      <div><div class="card-head-label">Key Terms</div><div class="card-head-title">Vocabulary Words</div></div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:#9A8E82;margin-bottom:10px;">Hover or tap to flip!</p>
+      <div class="vocab-grid">
+        <div class="vocab-flip" onclick="this.classList.toggle('flipped')"><div class="vocab-inner"><div class="vocab-front"><div class="vf-emoji">🔢</div><div class="vf-word">Ordinal Number</div><div class="vf-hint">tap to flip</div></div><div class="vocab-back">A special number word that tells the position or order of something, like first, second, or third.</div></div></div>
+        <div class="vocab-flip" onclick="this.classList.toggle('flipped')"><div class="vocab-inner"><div class="vocab-front"><div class="vf-emoji">📍</div><div class="vf-word">Position</div><div class="vf-hint">tap to flip</div></div><div class="vocab-back">The place where something is in a line or group, such as first in line or third from the left.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card theme-sun">
+    <div class="card-head">
+      <div class="card-head-icon">&#x1F440;</div>
+      <div><div class="card-head-label">Before You Begin</div><div class="card-head-title">Notice &amp; Wonder</div></div>
+    </div>
+    <div class="card-body">
+      <p>Think about standing in line, where you are fourth and your friend is right behind you. <strong>What do you notice</strong> about how the words first, second, third, and fourth tell exactly where each person is standing? <strong>What do you wonder</strong> about what your friend’s position would be if the whole line turned around and faced the other way?</p>
+    </div>
+  </div>
+
+  <div class="card theme-sky">
+    <div class="card-head">
+      <div class="card-head-icon">&#x1F3AE;</div>
+      <div><div class="card-head-label">Interactive Activity</div><div class="card-head-title">Ordinal Numbers Line Up</div></div>
+    </div>
+    <div class="card-body">
+      <div class="rainbow-frame">
+        <iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLCB2aWV3cG9ydC1maXQ9Y292ZXIiPgo8dGl0bGU+T3JkaW5hbCBOdW1iZXJzIExpbmUgVXA8L3RpdGxlPgo8c3R5bGU+CiAgOnJvb3R7CiAgICAtLWNyZWFtOiNGMkY4RkY7IC0taW5rOiMyMzI4M0E7IC0tY2FyZDojRkZGRkZGOwogICAgLS1ibHVlOiMyQjdCQzQ7IC0tcHVycGxlOiM3QTRCQzk7IC0tZ3JlZW46IzNDOUEzQzsgLS1iYWQ6I0UwNTI1MjsgLS1nb2xkOiNGMkI1MkM7CiAgICBwYWRkaW5nLXRvcDogZW52KHNhZmUtYXJlYS1pbnNldC10b3AsIDBweCk7CiAgICBwYWRkaW5nLWJvdHRvbTogZW52KHNhZmUtYXJlYS1pbnNldC1ib3R0b20sIDBweCk7CiAgfQogICp7Ym94LXNpemluZzpib3JkZXItYm94O30KICBodG1sLGJvZHl7bWFyZ2luOjA7bWluLWhlaWdodDoxMDAlO2ZvbnQtZmFtaWx5OidUcmVidWNoZXQgTVMnLCdTZWdvZSBVSScsc2Fucy1zZXJpZjtiYWNrZ3JvdW5kOnZhcigtLWNyZWFtKTtjb2xvcjp2YXIoLS1pbmspO292ZXJmbG93LXg6aGlkZGVuO30KICAud3JhcHttYXgtd2lkdGg6OTYwcHg7bWFyZ2luOjAgYXV0bztwYWRkaW5nOjE4cHggMTZweCAzMnB4O30KICBoZWFkZXJ7dGV4dC1hbGlnbjpjZW50ZXI7bWFyZ2luLWJvdHRvbTo4cHg7fQogIGgxe2ZvbnQtc2l6ZTpjbGFtcCgxLjZyZW0sNXZ3LDIuNHJlbSk7bWFyZ2luOjRweCAwIDJweDtjb2xvcjp2YXIoLS1wdXJwbGUpO30KICBwLnN1YnttYXJnaW46MDtmb250LXNpemU6MS4wNXJlbTtjb2xvcjojNGQ1MzY4O30KICAuc2NvcmVib2FyZHtkaXNwbGF5OmZsZXg7anVzdGlmeS1jb250ZW50OmNlbnRlcjtnYXA6MTRweDttYXJnaW46MTBweCAwIDE0cHg7Zm9udC13ZWlnaHQ6Ym9sZDtmbGV4LXdyYXA6d3JhcDt9CiAgLnNjb3JlYm9hcmQgc3BhbntiYWNrZ3JvdW5kOnZhcigtLWNhcmQpO2JvcmRlci1yYWRpdXM6OTk5cHg7cGFkZGluZzo2cHggMTZweDtib3gtc2hhZG93OjAgMnB4IDZweCByZ2JhKDAsMCwwLC4wOCk7fQogIC5wcm9tcHR7CiAgICBiYWNrZ3JvdW5kOnZhcigtLWNhcmQpO2JvcmRlci1yYWRpdXM6MjJweDtwYWRkaW5nOjE4cHggMTZweDt0ZXh0LWFsaWduOmNlbnRlcjtmb250LXNpemU6Y2xhbXAoMS4zcmVtLDQuNXZ3LDEuOXJlbSk7CiAgICBmb250LXdlaWdodDpib2xkO2JveC1zaGFkb3c6MCA0cHggMCByZ2JhKDAsMCwwLC4wOCk7bWFyZ2luOjZweCBhdXRvIDE4cHg7bWF4LXdpZHRoOjcyMHB4OwogIH0KICAucHJvbXB0IC5vcmR7Y29sb3I6dmFyKC0tcHVycGxlKTt9CiAgLmxhbmV7CiAgICBkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6ZmxleC1lbmQ7anVzdGlmeS1jb250ZW50OmNlbnRlcjtnYXA6OHB4O2ZsZXgtd3JhcDpub3dyYXA7CiAgICBwYWRkaW5nOjE0cHggOHB4IDEwcHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTgwZGVnLCNEREVFRkYsI0M2RTNGRik7Ym9yZGVyLXJhZGl1czoyNHB4OwogICAgb3ZlcmZsb3cteDphdXRvOwogIH0KICAuc3RhcnR7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1zaXplOi44NXJlbTtmb250LXdlaWdodDpib2xkO2NvbG9yOnZhcigtLWJsdWUpO21pbi13aWR0aDo1MnB4O30KICAuc3RhcnQgLmZsYWd7Zm9udC1zaXplOjIuMnJlbTt9CiAgLmFuaW1hbHsKICAgIGZsZXg6MCAwIGF1dG87d2lkdGg6NzhweDtoZWlnaHQ6OTJweDtib3JkZXItcmFkaXVzOjE4cHg7YmFja2dyb3VuZDp2YXIoLS1jYXJkKTtib3JkZXI6M3B4IHNvbGlkICNjZmUwZjI7CiAgICBmb250LXNpemU6Mi42cmVtO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7anVzdGlmeS1jb250ZW50OmNlbnRlcjtjdXJzb3I6cG9pbnRlcjsKICAgIGJveC1zaGFkb3c6MCAzcHggMCAjY2ZlMGYyO3RyYW5zaXRpb246dHJhbnNmb3JtIC4xNXMsYm9yZGVyLWNvbG9yIC4xNXM7LXdlYmtpdC10YXAtaGlnaGxpZ2h0LWNvbG9yOnRyYW5zcGFyZW50OwogICAgZm9udC1mYW1pbHk6aW5oZXJpdDsKICB9CiAgLmFuaW1hbDpob3Zlcnt0cmFuc2Zvcm06dHJhbnNsYXRlWSgtM3B4KTt9CiAgLmFuaW1hbC5zdGF0aWN7Y3Vyc29yOmRlZmF1bHQ7fQogIC5hbmltYWwuc3RhdGljOmhvdmVye3RyYW5zZm9ybTpub25lO30KICAuYW5pbWFsLnRhcmdldHtib3JkZXItY29sb3I6dmFyKC0tZ29sZCk7Ym94LXNoYWRvdzowIDAgMCA0cHggcmdiYSgyNDIsMTgxLDQ0LC4zNSksMCAzcHggMCB2YXIoLS1nb2xkKTthbmltYXRpb246Ym9iIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlO30KICAuYW5pbWFsLmNvcnJlY3R7Ym9yZGVyLWNvbG9yOnZhcigtLWdyZWVuKTtiYWNrZ3JvdW5kOiNFNUY3RTU7fQogIC5hbmltYWwud3Jvbmd7YW5pbWF0aW9uOnNoYWtlIC40cztib3JkZXItY29sb3I6dmFyKC0tYmFkKTt9CiAgQGtleWZyYW1lcyBzaGFrZXswJSwxMDAle3RyYW5zZm9ybTp0cmFuc2xhdGVYKDApfTI1JXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtNnB4KX03NSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoNnB4KX19CiAgQGtleWZyYW1lcyBib2J7MCUsMTAwJXt0cmFuc2Zvcm06dHJhbnNsYXRlWSgwKX01MCV7dHJhbnNmb3JtOnRyYW5zbGF0ZVkoLTVweCl9fQogIC5hcnJvd3t0ZXh0LWFsaWduOmNlbnRlcjtjb2xvcjp2YXIoLS1ibHVlKTtmb250LXdlaWdodDpib2xkO21hcmdpbjo2cHggMCAwO2ZvbnQtc2l6ZTouOTVyZW07fQogIC5jaG9pY2Vze2Rpc3BsYXk6ZmxleDtmbGV4LXdyYXA6d3JhcDtnYXA6MTJweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO21hcmdpbi10b3A6MThweDttaW4taGVpZ2h0OjY0cHg7fQogIC5jaG9pY2V7CiAgICBtaW4td2lkdGg6MTIwcHg7cGFkZGluZzoxMnB4IDE2cHg7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czoxOHB4O2JhY2tncm91bmQ6bGluZWFyLWdyYWRpZW50KDE2MGRlZywjOUI2QkU4LHZhcigtLXB1cnBsZSkpO2NvbG9yOiNmZmY7CiAgICBmb250LXNpemU6MS4zcmVtO2ZvbnQtd2VpZ2h0OmJvbGQ7Y3Vyc29yOnBvaW50ZXI7Ym94LXNoYWRvdzowIDVweCAwIHJnYmEoMCwwLDAsLjE1KTtmb250LWZhbWlseTppbmhlcml0OwogIH0KICAuY2hvaWNlOmFjdGl2ZXt0cmFuc2Zvcm06dHJhbnNsYXRlWSgzcHgpO2JveC1zaGFkb3c6MCAycHggMCByZ2JhKDAsMCwwLC4xNSk7fQogIC5jaG9pY2Uud3Jvbmd7YW5pbWF0aW9uOnNoYWtlIC40cztiYWNrZ3JvdW5kOnZhcigtLWJhZCk7fQogIC5jaG9pY2UuY29ycmVjdHtiYWNrZ3JvdW5kOnZhcigtLWdyZWVuKTt9CiAgLmNob2ljZSBzbWFsbHtkaXNwbGF5OmJsb2NrO2ZvbnQtc2l6ZTouOHJlbTtvcGFjaXR5Oi45O2ZvbnQtd2VpZ2h0Om5vcm1hbDt9CiAgLmhpbnR7dGV4dC1hbGlnbjpjZW50ZXI7bWluLWhlaWdodDoxLjZlbTttYXJnaW46MTRweCAwIDA7Zm9udC1zaXplOjEuMXJlbTtmb250LXdlaWdodDpib2xkO2NvbG9yOiM0ZDUzNjg7fQogIC5zdW1tYXJ5e2Rpc3BsYXk6bm9uZTt0ZXh0LWFsaWduOmNlbnRlcjtiYWNrZ3JvdW5kOnZhcigtLWNhcmQpO2JvcmRlci1yYWRpdXM6MjRweDtwYWRkaW5nOjI2cHggMTZweDttYXgtd2lkdGg6NTIwcHg7bWFyZ2luOjIwcHggYXV0bztib3gtc2hhZG93OjAgNHB4IDAgcmdiYSgwLDAsMCwuMDgpO30KICAuc3VtbWFyeSBoMnttYXJnaW46MCAwIDhweDtmb250LXNpemU6MS44cmVtO2NvbG9yOnZhcigtLXB1cnBsZSk7fQogIC5zdW1tYXJ5IC5iaWd7Zm9udC1zaXplOjNyZW07fQogIC5jb250cm9sc3t0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tdG9wOjIwcHg7ZGlzcGxheTpmbGV4O2dhcDoxMHB4O2p1c3RpZnktY29udGVudDpjZW50ZXI7ZmxleC13cmFwOndyYXA7fQogIGJ1dHRvbi5idG57YmFja2dyb3VuZDp2YXIoLS1pbmspO2NvbG9yOiNmZmY7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czo5OTlweDtwYWRkaW5nOjEwcHggMjJweDtmb250LXNpemU6MXJlbTtjdXJzb3I6cG9pbnRlcjtmb250LWZhbWlseTppbmhlcml0O30KICBidXR0b24uYnRuLmFsdHtiYWNrZ3JvdW5kOnZhcigtLXB1cnBsZSk7fQogIEBtZWRpYSAobWF4LXdpZHRoOjU2MHB4KXsgLmFuaW1hbHt3aWR0aDo1NnB4O2hlaWdodDo3MHB4O2ZvbnQtc2l6ZToycmVtO30gLnN0YXJ0e21pbi13aWR0aDo0MHB4O30gLmxhbmV7Z2FwOjVweDt9IH0KICBAbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOmRhcmspewogICAgOnJvb3Q6bm90KFtkYXRhLXRoZW1lPSJsaWdodCJdKXstLWNyZWFtOiMxNzFCMjg7LS1pbms6I0YxRjNGQTstLWNhcmQ6IzIzMkEzRDt9CiAgICAubGFuZXtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxODBkZWcsIzI2Mzg1QSwjMUUyRDRBKTt9CiAgICAuYW5pbWFse2JvcmRlci1jb2xvcjojM2E0YTZhO2JveC1zaGFkb3c6MCAzcHggMCAjM2E0YTZhO30KICAgIC5hbmltYWwuY29ycmVjdHtiYWNrZ3JvdW5kOiMxRjNCMjY7fQogICAgcC5zdWIsLmhpbnR7Y29sb3I6I2I4YzBkODt9CiAgICBoMSwuc3VtbWFyeSBoMiwucHJvbXB0IC5vcmR7Y29sb3I6I0I3OUNGNTt9CiAgICAuc3RhcnQsLmFycm93e2NvbG9yOiM3REI4RjU7fQogICAgYnV0dG9uLmJ0bntiYWNrZ3JvdW5kOiMzYTQ1NjA7fQogIH0KICA6cm9vdFtkYXRhLXRoZW1lPSJkYXJrIl17LS1jcmVhbTojMTcxQjI4Oy0taW5rOiNGMUYzRkE7LS1jYXJkOiMyMzJBM0Q7fQo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5Pgo8ZGl2IGNsYXNzPSJ3cmFwIj4KICA8aGVhZGVyPgogICAgPGgxPvCfj4EgTGluZSBVcCB3aXRoIE9yZGluYWwgTnVtYmVyczwvaDE+CiAgICA8cCBjbGFzcz0ic3ViIj5UaGUgbGluZSBzdGFydHMgYXQgdGhlIGZsYWcuIENvdW50IGZyb20gdGhlIGZsYWchPC9wPgogIDwvaGVhZGVyPgogIDxkaXYgY2xhc3M9InNjb3JlYm9hcmQiPgogICAgPHNwYW4gaWQ9InJvdW5kRWwiPlF1ZXN0aW9uIDEgb2YgMTA8L3NwYW4+CiAgICA8c3BhbiBpZD0ic2NvcmVFbCI+4q2QIFNjb3JlOiAwPC9zcGFuPgogIDwvZGl2PgoKICA8ZGl2IGlkPSJnYW1lIj4KICAgIDxkaXYgY2xhc3M9InByb21wdCIgaWQ9InByb21wdCI+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJsYW5lIiBpZD0ibGFuZSI+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJhcnJvdyI+VGhlIGxpbmUgZ29lcyB0aGlzIHdheSDinqHvuI88L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNob2ljZXMiIGlkPSJjaG9pY2VzIj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImhpbnQiIGlkPSJoaW50Ij4mbmJzcDs8L2Rpdj4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0ic3VtbWFyeSIgaWQ9InN1bW1hcnkiPgogICAgPGRpdiBjbGFzcz0iYmlnIj7wn46JPC9kaXY+CiAgICA8aDI+R3JlYXQgam9iITwvaDI+CiAgICA8cCBpZD0ic3VtbWFyeVRleHQiPjwvcD4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0iY29udHJvbHMiPgogICAgPGJ1dHRvbiBjbGFzcz0iYnRuIGFsdCIgaWQ9InNvdW5kQnRuIj7wn5SKIFNvdW5kOiBPbjwvYnV0dG9uPgogICAgPGJ1dHRvbiBjbGFzcz0iYnRuIiBpZD0icmVzZXRCdG4iPvCflIQgUGxheSBBZ2FpbjwvYnV0dG9uPgogIDwvZGl2Pgo8L2Rpdj4KCjxzY3JpcHQ+CmNvbnN0IE9SRCA9IFsiZmlyc3QiLCJzZWNvbmQiLCJ0aGlyZCIsImZvdXJ0aCIsImZpZnRoIiwic2l4dGgiLCJzZXZlbnRoIiwiZWlnaHRoIiwibmludGgiLCJ0ZW50aCJdOwpjb25zdCBTSE9SVCA9IFsiMXN0IiwiMm5kIiwiM3JkIiwiNHRoIiwiNXRoIiwiNnRoIiwiN3RoIiwiOHRoIiwiOXRoIiwiMTB0aCJdOwpjb25zdCBBTklNQUxTID0gWwogIHtlOiLwn5C2IixuOiJkb2cifSx7ZToi8J+QsSIsbjoiY2F0In0se2U6IvCfkLAiLG46InJhYmJpdCJ9LHtlOiLwn5C4IixuOiJmcm9nIn0se2U6IvCfkLsiLG46ImJlYXIifSwKICB7ZToi8J+miiIsbjoiZm94In0se2U6IvCfkLwiLG46InBhbmRhIn0se2U6IvCfkLUiLG46Im1vbmtleSJ9LHtlOiLwn5C3IixuOiJwaWcifSx7ZToi8J+QriIsbjoiY293In0sCiAge2U6IvCfpoEiLG46Imxpb24ifSx7ZToi8J+QryIsbjoidGlnZXIifQpdOwpjb25zdCBUT1RBTCA9IDEwOwpsZXQgcm91bmQ9MCwgc2NvcmU9MCwgc291bmRPbj10cnVlLCBsaW5lPVtdLCB0YXJnZXQ9MCwgdHlwZT0nQScsIG1pc3NlZD1mYWxzZSwgbG9ja2VkPWZhbHNlOwoKY29uc3QgJD1pZD0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoaWQpOwpmdW5jdGlvbiBzaHVmZmxlKGEpe2E9Wy4uLmFdO2ZvcihsZXQgaT1hLmxlbmd0aC0xO2k+MDtpLS0pe2NvbnN0IGo9TWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpKihpKzEpKTtbYVtpXSxhW2pdXT1bYVtqXSxhW2ldXTt9cmV0dXJuIGE7fQpmdW5jdGlvbiBzcGVhayh0KXsKICBpZighc291bmRPbikgcmV0dXJuOwogIHRyeXsgaWYoJ3NwZWVjaFN5bnRoZXNpcycgaW4gd2luZG93KXsgc3BlZWNoU3ludGhlc2lzLmNhbmNlbCgpOyBjb25zdCB1PW5ldyBTcGVlY2hTeW50aGVzaXNVdHRlcmFuY2UodCk7IHUucmF0ZT0wLjg1OyBzcGVlY2hTeW50aGVzaXMuc3BlYWsodSk7fSB9Y2F0Y2goZSl7fQp9CgpmdW5jdGlvbiBzdGFydFJvdW5kKCl7CiAgbG9ja2VkPWZhbHNlOyBtaXNzZWQ9ZmFsc2U7CiAgJCgnaGludCcpLmlubmVySFRNTD0nJm5ic3A7JzsKICAkKCdyb3VuZEVsJykudGV4dENvbnRlbnQ9YFF1ZXN0aW9uICR7cm91bmQrMX0gb2YgJHtUT1RBTH1gOwogIGNvbnN0IGxlbiA9IHJvdW5kPDUgPyA1IDogcm91bmQ8OCA/IDYgOiA4OwogIGxpbmUgPSBzaHVmZmxlKEFOSU1BTFMpLnNsaWNlKDAsbGVuKTsKICB0eXBlID0gcm91bmQlMj09PTAgPyAnQScgOiAnQic7CiAgdGFyZ2V0ID0gTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpKmxlbik7CiAgY29uc3QgbGFuZT0kKCdsYW5lJyk7IGxhbmUuaW5uZXJIVE1MPScnOwogIGNvbnN0IHN0PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpOyBzdC5jbGFzc05hbWU9J3N0YXJ0Jzsgc3QuaW5uZXJIVE1MPSc8ZGl2IGNsYXNzPSJmbGFnIj7wn5qpPC9kaXY+U1RBUlQnOyBsYW5lLmFwcGVuZENoaWxkKHN0KTsKICBsaW5lLmZvckVhY2goKGEsaSk9PnsKICAgIGNvbnN0IGI9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYnV0dG9uJyk7CiAgICBiLmNsYXNzTmFtZT0nYW5pbWFsJysodHlwZT09PSdCJz8nIHN0YXRpYyc6JycpKyh0eXBlPT09J0InJiZpPT09dGFyZ2V0PycgdGFyZ2V0JzonJyk7CiAgICBiLnRleHRDb250ZW50PWEuZTsgYi5zZXRBdHRyaWJ1dGUoJ2FyaWEtbGFiZWwnLGEubik7CiAgICBpZih0eXBlPT09J0EnKSBiLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywoKT0+cGlja0FuaW1hbChpLGIpKTsKICAgIGxhbmUuYXBwZW5kQ2hpbGQoYik7CiAgfSk7CiAgY29uc3QgY2g9JCgnY2hvaWNlcycpOyBjaC5pbm5lckhUTUw9Jyc7CiAgbGV0IHRleHQ7CiAgaWYodHlwZT09PSdBJyl7CiAgICB0ZXh0PWBUYXAgdGhlICR7T1JEW3RhcmdldF19IGFuaW1hbC5gOwogICAgJCgncHJvbXB0JykuaW5uZXJIVE1MPWBUYXAgdGhlIDxzcGFuIGNsYXNzPSJvcmQiPiR7T1JEW3RhcmdldF19PC9zcGFuPiBhbmltYWwuYDsKICB9IGVsc2UgewogICAgdGV4dD1gV2hlcmUgaXMgdGhlICR7bGluZVt0YXJnZXRdLm59PyBXaGF0IHBvc2l0aW9uIGlzIGl0IGluP2A7CiAgICAkKCdwcm9tcHQnKS5pbm5lckhUTUw9YFdoZXJlIGlzIHRoZSAke2xpbmVbdGFyZ2V0XS5lfT8gV2hpY2ggcG9zaXRpb24gaXMgaXQgaW4/YDsKICAgIGxldCBvcHRzPW5ldyBTZXQoW3RhcmdldF0pOwogICAgd2hpbGUob3B0cy5zaXplPDQpeyBvcHRzLmFkZChNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkqbGVuKSk7IH0KICAgIHNodWZmbGUoWy4uLm9wdHNdKS5mb3JFYWNoKGk9PnsKICAgICAgY29uc3QgYz1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdidXR0b24nKTsgYy5jbGFzc05hbWU9J2Nob2ljZSc7CiAgICAgIGMuaW5uZXJIVE1MPWAke09SRFtpXX08c21hbGw+JHtTSE9SVFtpXX08L3NtYWxsPmA7CiAgICAgIGMuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCgpPT5waWNrQ2hvaWNlKGksYykpOwogICAgICBjaC5hcHBlbmRDaGlsZChjKTsKICAgIH0pOwogIH0KICBzcGVhayh0ZXh0KTsKfQoKZnVuY3Rpb24gZ29vZCgpewogIGxvY2tlZD10cnVlOwogIGlmKCFtaXNzZWQpIHNjb3JlKys7CiAgJCgnc2NvcmVFbCcpLnRleHRDb250ZW50PWDirZAgU2NvcmU6ICR7c2NvcmV9YDsKICAkKCdoaW50JykudGV4dENvbnRlbnQ9J1llcyEgR3JlYXQgY291bnRpbmchIPCfjoknOwogIHNwZWFrKCdZZXMhIEdyZWF0IGNvdW50aW5nIScpOwogIHNldFRpbWVvdXQoKCk9Pnsgcm91bmQrKzsgcm91bmQ+PVRPVEFMP2ZpbmlzaCgpOnN0YXJ0Um91bmQoKTsgfSwxMzAwKTsKfQpmdW5jdGlvbiBiYWQoZWwsbXNnKXsKICBtaXNzZWQ9dHJ1ZTsKICBlbC5jbGFzc0xpc3QuYWRkKCd3cm9uZycpOyBzZXRUaW1lb3V0KCgpPT5lbC5jbGFzc0xpc3QucmVtb3ZlKCd3cm9uZycpLDQwMCk7CiAgJCgnaGludCcpLnRleHRDb250ZW50PW1zZzsKfQpmdW5jdGlvbiBwaWNrQW5pbWFsKGksZWwpewogIGlmKGxvY2tlZCkgcmV0dXJuOwogIGlmKGk9PT10YXJnZXQpeyBlbC5jbGFzc0xpc3QuYWRkKCdjb3JyZWN0Jyk7IGdvb2QoKTsgfQogIGVsc2UgYmFkKGVsLCdOb3QgcXVpdGUuIFN0YXJ0IGF0IHRoZSBmbGFnIGFuZCBjb3VudCBlYWNoIGFuaW1hbC4nKTsKfQpmdW5jdGlvbiBwaWNrQ2hvaWNlKGksZWwpewogIGlmKGxvY2tlZCkgcmV0dXJuOwogIGlmKGk9PT10YXJnZXQpeyBlbC5jbGFzc0xpc3QuYWRkKCdjb3JyZWN0Jyk7IGdvb2QoKTsgfQogIGVsc2UgYmFkKGVsLCdOb3QgcXVpdGUuIFN0YXJ0IGF0IHRoZSBmbGFnIGFuZCBjb3VudCB0byB0aGUgYW5pbWFsLicpOwp9CmZ1bmN0aW9uIGZpbmlzaCgpewogICQoJ2dhbWUnKS5zdHlsZS5kaXNwbGF5PSdub25lJzsKICAkKCdzdW1tYXJ5Jykuc3R5bGUuZGlzcGxheT0nYmxvY2snOwogICQoJ3N1bW1hcnlUZXh0JykudGV4dENvbnRlbnQ9YFlvdSBnb3QgJHtzY29yZX0gb3V0IG9mICR7VE9UQUx9IG9uIHRoZSBmaXJzdCB0cnkhYDsKICBzcGVhayhgR3JlYXQgam9iISBZb3UgZ290ICR7c2NvcmV9IG91dCBvZiAke1RPVEFMfSBvbiB0aGUgZmlyc3QgdHJ5IWApOwp9CiQoJ3NvdW5kQnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLGU9PnsKICBzb3VuZE9uPSFzb3VuZE9uOyBlLmN1cnJlbnRUYXJnZXQudGV4dENvbnRlbnQ9c291bmRPbj8n8J+UiiBTb3VuZDogT24nOifwn5SHIFNvdW5kOiBPZmYnOwp9KTsKJCgncmVzZXRCdG4nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsKCk9PnsKICByb3VuZD0wOyBzY29yZT0wOyAkKCdzY29yZUVsJykudGV4dENvbnRlbnQ9J+KtkCBTY29yZTogMCc7CiAgJCgnc3VtbWFyeScpLnN0eWxlLmRpc3BsYXk9J25vbmUnOyAkKCdnYW1lJykuc3R5bGUuZGlzcGxheT0nYmxvY2snOwogIHN0YXJ0Um91bmQoKTsKfSk7CnN0YXJ0Um91bmQoKTsKPC9zY3JpcHQ+CjwvYm9keT4KPC9odG1sPgoKPC9ib2R5PjwvaHRtbD4=" title="Ordinal Numbers Line Up" loading="lazy" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="card theme-purple">
+    <div class="card-head">
+      <div class="card-head-icon">&#x1F4AD;</div>
+      <div><div class="card-head-label">After the Lesson</div><div class="card-head-title">Reflection</div></div>
+    </div>
+    <div class="card-body">
+      <div class="reflection-box">
+        <span style="font-size:32px;flex-shrink:0;">&#x270F;&#xFE0F;</span>
+        <div class="ref-text">I learned about ordinal numbers, and one way I can use a position word like first, second, or third in my day is…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-family">
+    <span class="callout-icon">&#x1F3E0;</span>
+    <p><strong>Important to Add:</strong> Every day you should practice: Counting to 50 forward and backward &bull; Skip counting by 2&rsquo;s to 30 &bull; Skip counting by 5&rsquo;s to 100 &bull; Skip counting by 10&rsquo;s to 120</p>
+  </div>
+
+  <div class="art-divider" style="padding:4px 0 0;">&#x1F332; &#x270F;&#xFE0F; &#x1F43B;</div>
+</div>
+<div class="paint-border"></div>
+<div class="footer">&copy; 2025 Optima Academy Online &middot; <a href="https://www.optimaed.com" target="_blank">optimaed.com</a></div>
+</div>
+</body>
+</html>

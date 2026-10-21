@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Make a Ten Frame Game</title>
+<style>
+  :root{
+    --cream:#FFF8EC; --ink:#2B2A28; --card:#FFFFFF;
+    --orange:#F2711C; --blue:#2B7BC4; --green:#3C9A3C; --bad:#E05252; --purple:#7A4BC9;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;font-family:'Trebuchet MS','Segoe UI',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 16px 32px;}
+  header{text-align:center;margin-bottom:8px;}
+  h1{font-size:clamp(1.6rem,5vw,2.3rem);margin:4px 0 2px;color:var(--orange);}
+  p.sub{margin:0;font-size:1.05rem;color:#5a5854;}
+  .scoreboard{display:flex;justify-content:center;gap:14px;margin:10px 0 14px;font-weight:bold;flex-wrap:wrap;}
+  .scoreboard span{background:var(--card);border-radius:999px;padding:6px 16px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .prompt{background:var(--card);border-radius:22px;padding:14px 16px;text-align:center;font-size:clamp(1.15rem,4vw,1.6rem);font-weight:bold;
+    box-shadow:0 4px 0 rgba(0,0,0,.08);margin:6px auto 16px;max-width:720px;}
+  .frames{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;align-items:flex-start;}
+  .frame-box{text-align:center;}
+  .frame-label{font-weight:bold;margin-bottom:6px;font-size:1.05rem;}
+  .frame-label .num{font-size:1.5rem;}
+  .tf{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;background:#2B2A28;border-radius:14px;width:fit-content;margin:0 auto;}
+  .cell{width:clamp(44px,12vw,62px);height:clamp(44px,12vw,62px);background:#FFF;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .counter{width:80%;height:80%;border-radius:50%;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2);}
+  .counter.orange{background:var(--orange);}
+  .counter.blue{background:var(--blue);cursor:pointer;transition:transform .12s;}
+  .counter.blue:hover{transform:scale(1.08);}
+  .counter.moved{animation:pop .35s;}
+  .cell.source{cursor:pointer;}
+  @keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+  .plus{font-size:2.4rem;font-weight:bold;align-self:center;color:var(--ink);}
+  .status{text-align:center;margin:16px 0 6px;font-size:1.2rem;font-weight:bold;min-height:1.6em;}
+  .eq{text-align:center;font-size:clamp(1.3rem,5vw,2rem);font-weight:bold;margin:6px 0;min-height:1.5em;color:var(--purple);}
+  .choices{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;min-height:68px;}
+  .choice{min-width:84px;padding:12px 18px;border:none;border-radius:18px;background:linear-gradient(160deg,#9B6BE8,var(--purple));color:#fff;font-size:1.6rem;font-weight:bold;cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,.15);font-family:inherit;}
+  .choice:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.15);}
+  .choice.wrong{animation:shake .4s;background:var(--bad);}
+  .choice.correct{background:var(--green);}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .controls{text-align:center;margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  button.btn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:10px 22px;font-size:1rem;cursor:pointer;font-family:inherit;}
+  button.btn.alt{background:var(--purple);}
+  button.btn.next{background:var(--green);font-size:1.15rem;padding:12px 28px;}
+  button[hidden]{display:none;}
+  .summary{display:none;text-align:center;background:var(--card);border-radius:24px;padding:26px 16px;max-width:520px;margin:20px auto;box-shadow:0 4px 0 rgba(0,0,0,.08);}
+  .summary h2{margin:6px 0;font-size:1.8rem;color:var(--orange);}
+  .summary .big{font-size:3rem;}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){--cream:#1F1B16;--ink:#F4F0E8;--card:#2B2620;}
+    p.sub{color:#bdb6a8;}
+    .tf{background:#0f0d0a;}
+    .cell{background:#3a342b;}
+    button.btn{background:#4a4234;}
+    .eq,.summary h2{color:#B79CF5;}
+  }
+  :root[data-theme="dark"]{--cream:#1F1B16;--ink:#F4F0E8;--card:#2B2620;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔟 Make a Ten!</h1>
+    <p class="sub">Move blue counters to fill the ten frame. Then find the sum!</p>
+  </header>
+  <div class="scoreboard">
+    <span id="roundEl">Problem 1 of 8</span>
+    <span id="scoreEl">⭐ Score: 0</span>
+  </div>
+
+  <div id="game">
+    <div class="prompt" id="prompt"></div>
+    <div class="frames">
+      <div class="frame-box">
+        <div class="frame-label">Fill this frame to <span class="num">10</span></div>
+        <div class="tf" id="frameA"></div>
+      </div>
+      <div class="plus">+</div>
+      <div class="frame-box">
+        <div class="frame-label">Tap blue counters to move them</div>
+        <div class="tf" id="frameB"></div>
+      </div>
+    </div>
+    <div class="status" id="status">&nbsp;</div>
+    <div class="eq" id="eq">&nbsp;</div>
+    <div class="choices" id="choices"></div>
+    <div class="controls">
+      <button class="btn next" id="nextBtn" hidden>Next ➡️</button>
+    </div>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="big">🎉</div>
+    <h2>You made tens!</h2>
+    <p id="summaryText"></p>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="undoBtn">↩️ Try This One Again</button>
+    <button class="btn alt" id="soundBtn">🔊 Sound: On</button>
+    <button class="btn" id="resetBtn">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const AS = [9,9,8,8,9,7,8,6];
+const TOTAL = AS.length;
+let round=0, score=0, soundOn=true;
+let a=0,b=0,moved=0,full=false,missed=false,solved=false;
+
+const $=id=>document.getElementById(id);
+function speak(t){
+  if(!soundOn) return;
+  try{ if('speechSynthesis' in window){ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.rate=0.85; speechSynthesis.speak(u);} }catch(e){}
+}
+function rand(lo,hi){return lo+Math.floor(Math.random()*(hi-lo+1));}
+
+function drawFrames(){
+  const A=$('frameA'), B=$('frameB'); A.innerHTML=''; B.innerHTML='';
+  for(let i=0;i<10;i++){
+    const c=document.createElement('div'); c.className='cell';
+    if(i<a){ c.innerHTML='<div class="counter orange"></div>'; }
+    else if(i<a+moved){ c.innerHTML='<div class="counter blue moved"></div>'; }
+    A.appendChild(c);
+  }
+  const remaining=b-moved;
+  for(let i=0;i<10;i++){
+    const c=document.createElement('div'); c.className='cell';
+    if(i<remaining){
+      c.classList.add('source');
+      c.innerHTML='<div class="counter blue"></div>';
+      c.addEventListener('click',moveOne);
+    }
+    B.appendChild(c);
+  }
+}
+
+function startRound(){
+  a=AS[round]; b=rand(11-a,9); moved=0; full=false; missed=false; solved=false;
+  $('roundEl').textContent=`Problem ${round+1} of ${TOTAL}`;
+  $('prompt').textContent=`${a} + ${b} = ?`;
+  $('eq').innerHTML='&nbsp;'; $('choices').innerHTML=''; $('nextBtn').hidden=true;
+  const need=10-a;
+  $('status').textContent=`The orange frame has ${a}. Move ${need} blue counter${need===1?'':'s'} to make 10.`;
+  drawFrames();
+  speak(`${a} plus ${b}. Move ${need} blue counter${need===1?'':'s'} to make ten.`);
+}
+
+function moveOne(){
+  if(full||solved) return;
+  if(b-moved<=0) return;
+  moved++; drawFrames();
+  if(a+moved===10){
+    full=true;
+    const left=b-moved;
+    $('status').textContent=`You made 10! 🎉 Now there are ${left} more. 10 + ${left} = ?`;
+    speak(`You made ten! Now there are ${left} more. Ten plus ${left} equals what?`);
+    showChoices(a+b);
+  } else {
+    const need=10-a-moved;
+    $('status').textContent=`Keep going! Move ${need} more blue counter${need===1?'':'s'}.`;
+  }
+}
+
+function showChoices(sum){
+  const set=new Set([sum]);
+  [-2,-1,1,2].sort(()=>Math.random()-.5).forEach(d=>{ if(set.size<4 && sum+d>10) set.add(sum+d); });
+  while(set.size<4) set.add(sum+rand(1,3));
+  const ch=$('choices'); ch.innerHTML='';
+  [...set].sort(()=>Math.random()-.5).forEach(n=>{
+    const bt=document.createElement('button'); bt.className='choice'; bt.textContent=n;
+    bt.addEventListener('click',()=>answer(n,bt,sum));
+    ch.appendChild(bt);
+  });
+}
+
+function answer(n,el,sum){
+  if(solved) return;
+  if(n===sum){
+    solved=true; el.classList.add('correct');
+    if(!missed) score++;
+    $('scoreEl').textContent=`⭐ Score: ${score}`;
+    const left=b-moved;
+    $('eq').textContent=`${a} + ${b} = 10 + ${left} = ${sum}`;
+    $('status').textContent='Yes! You made a ten and found the sum! ⭐';
+    speak(`Yes! ${a} plus ${b} equals ${sum}.`);
+    const nb=$('nextBtn'); nb.hidden=false; nb.textContent = round===TOTAL-1 ? 'Finish 🎉' : 'Next ➡️';
+  } else {
+    missed=true; el.classList.add('wrong'); setTimeout(()=>el.classList.remove('wrong'),400);
+    $('status').textContent='Not quite. Count the 10, then count the extras.';
+  }
+}
+
+$('nextBtn').addEventListener('click',()=>{
+  round++;
+  if(round>=TOTAL){
+    $('game').style.display='none'; $('summary').style.display='block';
+    $('summaryText').textContent=`You got ${score} out of ${TOTAL} on the first try!`;
+    speak(`Great job! You got ${score} out of ${TOTAL} on the first try!`);
+  } else startRound();
+});
+$('undoBtn').addEventListener('click',()=>{ if(!$('game').style.display || $('game').style.display!=='none'){ moved=0; full=false; solved=false; $('eq').innerHTML='&nbsp;'; $('choices').innerHTML=''; $('nextBtn').hidden=true; $('status').textContent=`Move ${10-a} blue counter${10-a===1?'':'s'} to make 10.`; drawFrames(); }});
+$('soundBtn').addEventListener('click',e=>{ soundOn=!soundOn; e.currentTarget.textContent=soundOn?'🔊 Sound: On':'🔇 Sound: Off'; });
+$('resetBtn').addEventListener('click',()=>{
+  round=0; score=0; $('scoreEl').textContent='⭐ Score: 0';
+  $('summary').style.display='none'; $('game').style.display='block'; startRound();
+});
+startRound();
+</script>
+</body>
+</html>
+
+</body></html>
