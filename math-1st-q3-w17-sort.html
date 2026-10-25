@@ -1,0 +1,594 @@
+<title>Take-Away Chalkboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&family=Patrick+Hand&display=swap">
+<style>
+:root {
+  /* Layout: one centered column on a chalkboard. Header and level picker, a status line, a tray of chalk-outlined equation cards, then three range bins to sort them into. */
+  --bg: #1F3A33;
+  --surface: #274840;
+  --ink: #F2F0E6;
+  --muted: #A9C2B8;
+  --line: #4A6B61;
+  --accent: #F5D76E;
+  --accent-ink: #1F3A33;
+  --accent-tint: #34584E;
+  --b0: #7FD1F5;
+  --b0t: #2B5262;
+  --b1: #F59FB8;
+  --b1t: #5E3A48;
+  --b2: #A9E39A;
+  --b2t: #3A5F42;
+  --good: #A9E39A;
+  --good-tint: #2F5A45;
+  --bad: #FFA897;
+  --bad-tint: #5A3A38;
+  --star: #F5D76E;
+  --shadow: 0 2px 0 rgba(0,0,0,.25);
+  --display: 'Patrick Hand', 'Comic Sans MS', 'Segoe Print', system-ui, sans-serif;
+  --body: 'Lexend', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F2F6F4;
+    --surface: #FFFFFF;
+    --ink: #1B2A27;
+    --muted: #4F6A63;
+    --line: #C7D6D0;
+    --accent: #1F6F5C;
+    --accent-ink: #FFFFFF;
+    --accent-tint: #DDEEE8;
+    --b0: #12689B;
+    --b0t: #DDEEF8;
+    --b1: #B0285A;
+    --b1t: #F9E0E9;
+    --b2: #6B5200;
+    --b2t: #F7ECC8;
+    --good: #1E7A3C;
+    --good-tint: #DDF1E3;
+    --bad: #B3382A;
+    --bad-tint: #FBE1DD;
+    --star: #DFA000;
+    --shadow: 0 2px 0 rgba(27,42,39,.12);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F2F6F4;
+  --surface: #FFFFFF;
+  --ink: #1B2A27;
+  --muted: #4F6A63;
+  --line: #C7D6D0;
+  --accent: #1F6F5C;
+  --accent-ink: #FFFFFF;
+  --accent-tint: #DDEEE8;
+  --b0: #12689B;
+  --b0t: #DDEEF8;
+  --b1: #B0285A;
+  --b1t: #F9E0E9;
+  --b2: #6B5200;
+  --b2t: #F7ECC8;
+  --good: #1E7A3C;
+  --good-tint: #DDF1E3;
+  --bad: #B3382A;
+  --bad-tint: #FBE1DD;
+  --star: #DFA000;
+  --shadow: 0 2px 0 rgba(27,42,39,.12);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.app { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: .01em;
+  margin: 0;
+  text-wrap: balance;
+}
+.levels { display: flex; flex-wrap: wrap; gap: 8px; }
+.level {
+  background: transparent;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: .9rem;
+  cursor: pointer;
+}
+.level[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.level-desc { margin: 0; color: var(--muted); font-size: .9rem; }
+
+.hud {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.hud .round { font-family: var(--display); font-size: 1.5rem; }
+.meter { display: flex; align-items: center; gap: 10px; flex: 1 1 180px; min-width: 0; color: var(--muted); font-size: .85rem; }
+.bar { flex: 1; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; min-width: 60px; }
+.bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .3s; }
+.stars-total { display: inline-flex; align-items: center; gap: 4px; color: var(--star); }
+.stars-total b { color: var(--ink); font-weight: 600; }
+
+.status {
+  margin: 0;
+  min-height: 3.6em;
+  display: flex; align-items: center;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--accent-tint);
+  font-weight: 500;
+  font-size: .95rem;
+}
+.status[data-kind="good"] { background: var(--good-tint); color: var(--good); }
+.status[data-kind="bad"] { background: var(--bad-tint); color: var(--bad); }
+
+.tray {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 10px;
+  min-height: 80px;
+}
+.card {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  min-height: 68px;
+  padding: 8px 6px;
+  border-radius: 6px 12px 7px 11px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  cursor: grab;
+  transition: transform .12s, background .12s;
+}
+.card:hover { transform: translateY(-2px) rotate(-1deg); }
+.card[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-tint); transform: translateY(-4px); }
+.card.shake { animation: shake .4s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+.tray-done { grid-column: 1 / -1; align-self: center; color: var(--muted); font-weight: 500; text-align: center; }
+
+.bins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.bin {
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px;
+  min-height: 230px;
+  padding: 12px 8px;
+  background: transparent;
+  border: 3px dashed var(--bc);
+  border-radius: 14px 10px 16px 9px;
+  cursor: pointer;
+  text-align: center;
+  transition: background .12s, transform .12s;
+}
+.bin[data-i="0"] { --bc: var(--b0); --bt: var(--b0t); }
+.bin[data-i="1"] { --bc: var(--b1); --bt: var(--b1t); }
+.bin[data-i="2"] { --bc: var(--b2); --bt: var(--b2t); }
+.bins.armed .bin { border-style: solid; }
+.bin:hover, .bin.over { background: var(--bt); }
+.bin.over { transform: scale(1.02); }
+.bin.nope { animation: shake .4s; }
+.bin-eq {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 2.1rem;
+  line-height: 1.05;
+  color: var(--bc);
+  font-variant-numeric: tabular-nums;
+}
+.bin-eq small {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--body);
+  font-size: .65rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chips { display: flex; flex-direction: column; gap: 6px; }
+.chip {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--bt);
+  color: var(--bc);
+  border-radius: 8px;
+  padding: 4px 3px;
+  animation: pop .25s;
+}
+.bin:hover .chip, .bin.over .chip { background: var(--surface); }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.overlay {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: rgba(8, 18, 15, .65);
+}
+.dialog {
+  width: 100%; max-width: 420px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 12px 18px 12px 16px;
+  padding: 26px 24px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  animation: pop .25s;
+}
+.dialog h2 { font-family: var(--display); font-weight: 400; font-size: 2.2rem; line-height: 1.05; margin: 0; text-wrap: balance; }
+.dialog p { margin: 0; color: var(--muted); }
+.dialog .stars { display: flex; gap: 6px; color: var(--star); }
+.dialog .stars .off { color: var(--line); }
+.dialog .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 6px; }
+.btn {
+  border: 2px solid var(--ink);
+  background: transparent;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+@media (max-width: 440px) {
+  h1 { font-size: 2.2rem; }
+  .card { font-size: 1.8rem; }
+  .bin-eq { font-size: 1.9rem; }
+  .chip { font-size: .95rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="app">
+  <header>
+    <h1>Take-Away Chalkboard</h1>
+    <div class="levels" id="levels" role="group" aria-label="Choose a level"></div>
+    <p class="level-desc" id="levelDesc"></p>
+  </header>
+
+  <div class="hud" id="hud"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <section class="tray" id="tray" aria-label="Subtraction cards"></section>
+  <section class="bins" id="bins" aria-label="Answer range bins"></section>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" id="dialog"></div>
+</div>
+
+<script>
+(function () {
+  var TOTAL_ROUNDS = 5;
+  var INTRO = 'Work out each answer, then put the card in the bin whose range holds it. Tap a card then a bin, or drag.';
+  // Each level fixes the numbers being subtracted (b), the starting numbers (a), and three answer ranges.
+  var LEVELS = {
+    1: { label: 'Take away 1 to 3', desc: 'Small take-aways from numbers up to 20, like 17 − 2.', minA: 4, maxA: 20, minB: 1, maxB: 3, bins: [[1, 6], [7, 12], [13, 19]] },
+    2: { label: 'Take away 4 to 6', desc: 'Medium take-aways, like 15 − 5 or 11 − 6.', minA: 6, maxA: 20, minB: 4, maxB: 6, bins: [[0, 5], [6, 10], [11, 16]] },
+    3: { label: 'Take away 7 to 9', desc: 'Bigger take-aways that cross ten, like 13 − 8.', minA: 7, maxA: 20, minB: 7, maxB: 9, bins: [[0, 3], [4, 7], [8, 13]] },
+    4: { label: 'Take away 10 or more', desc: 'Take away a whole ten or more, like 19 − 12.', minA: 10, maxA: 20, minB: 10, maxB: 20, bins: [[0, 2], [3, 6], [7, 10]] },
+    5: { label: 'Mixed', desc: 'Any subtraction within 20.', minA: 4, maxA: 20, minB: 1, maxB: 20, bins: [[0, 6], [7, 13], [14, 19]] }
+  };
+  var STAR = '<svg viewBox="0 0 24 24" width="SIZE" height="SIZE" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>';
+  function star(size) { return STAR.replace(/SIZE/g, size); }
+
+  var level = 1, round = 0, totalStars = 0, used = new Set();
+  var cards = [], bins = [], selected = null, mistakes = 0, nextId = 1;
+
+  try {
+    var saved = parseInt(localStorage.getItem('chalk-takeaway-level'), 10);
+    if (LEVELS[saved]) level = saved;
+  } catch (e) {}
+
+  var elLevels = document.getElementById('levels');
+  var elDesc = document.getElementById('levelDesc');
+  var elHud = document.getElementById('hud');
+  var elStatus = document.getElementById('status');
+  var elTray = document.getElementById('tray');
+  var elBins = document.getElementById('bins');
+  var elOverlay = document.getElementById('overlay');
+  var elDialog = document.getElementById('dialog');
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function rangeLabel(b) { return b[0] === b[1] ? String(b[0]) : b[0] + '–' + b[1]; }
+  function rangeWords(b) { return b[0] === b[1] ? String(b[0]) : b[0] + ' to ' + b[1]; }
+  function pairKey(p) { return p.a + '-' + p.b; }
+
+  function pool(lv) {
+    var L = LEVELS[lv], out = [];
+    for (var a = L.minA; a <= L.maxA; a++) {
+      for (var b = L.minB; b <= L.maxB; b++) {
+        if (b > a) continue;
+        var r = a - b;
+        for (var i = 0; i < L.bins.length; i++) {
+          if (r >= L.bins[i][0] && r <= L.bins[i][1]) { out.push({ a: a, b: b, r: r, bin: i }); break; }
+        }
+      }
+    }
+    return out;
+  }
+
+  function buildRound() {
+    var L = LEVELS[level], all = pool(level);
+    bins = L.bins;
+    cards = [];
+    bins.forEach(function (rng, i) {
+      var list = all.filter(function (p) { return p.bin === i; });
+      var fresh = shuffle(list.filter(function (p) { return !used.has(pairKey(p)); }));
+      var rest = shuffle(list.filter(function (p) { return used.has(pairKey(p)); }));
+      fresh.concat(rest).slice(0, 3).forEach(function (p) {
+        used.add(pairKey(p));
+        cards.push({ id: nextId++, a: p.a, b: p.b, r: p.r, bin: i, done: false });
+      });
+    });
+    cards = shuffle(cards);
+  }
+
+  function hint(c) {
+    if (c.a > 10 && c.b > c.a - 10) {
+      var x = c.a - 10;
+      return 'Try this: take away ' + x + ' to reach 10, then ' + (c.b - x) + ' more.';
+    }
+    return 'Try this: start at ' + c.a + ' and count back ' + c.b + '.';
+  }
+
+  function setStatus(text, kind) {
+    elStatus.textContent = text;
+    elStatus.setAttribute('data-kind', kind || 'info');
+  }
+
+  function renderLevels() {
+    elLevels.innerHTML = Object.keys(LEVELS).map(function (k) {
+      return '<button type="button" class="level" data-level="' + k + '" aria-pressed="' + (+k === level) + '">' + LEVELS[k].label + '</button>';
+    }).join('');
+    elDesc.textContent = LEVELS[level].desc;
+  }
+
+  function renderHud() {
+    var placed = cards.filter(function (c) { return c.done; }).length;
+    var pct = cards.length ? Math.round(placed / cards.length * 100) : 0;
+    elHud.innerHTML =
+      '<span class="round">Round ' + round + ' of ' + TOTAL_ROUNDS + '</span>' +
+      '<span class="meter"><span>' + placed + ' of ' + cards.length + ' sorted</span><span class="bar"><span style="width:' + pct + '%"></span></span></span>' +
+      '<span class="stars-total" aria-label="' + totalStars + ' stars earned">' + star(22) + '<b>' + totalStars + '</b></span>';
+  }
+
+  function renderTray() {
+    var left = cards.filter(function (c) { return !c.done; });
+    if (!left.length) {
+      elTray.innerHTML = '<p class="tray-done">Every card is sorted.</p>';
+      return;
+    }
+    elTray.innerHTML = left.map(function (c) {
+      return '<button type="button" class="card" draggable="true" data-id="' + c.id + '" aria-pressed="' + (selected === c.id) + '" aria-label="' + c.a + ' minus ' + c.b + '">' + c.a + ' − ' + c.b + '</button>';
+    }).join('');
+  }
+
+  function renderBins() {
+    elBins.className = 'bins' + (selected !== null ? ' armed' : '');
+    elBins.innerHTML = bins.map(function (rng, i) {
+      var inBin = cards.filter(function (c) { return c.done && c.bin === i; });
+      var chips = inBin.map(function (c) { return '<span class="chip">' + c.a + ' − ' + c.b + ' = ' + c.r + '</span>'; }).join('');
+      return '<button type="button" class="bin" data-i="' + i + '" aria-label="Answers ' + rangeWords(rng) + '. ' + inBin.length + ' cards in this bin.">' +
+        '<span class="bin-eq"><small>answer</small>' + rangeLabel(rng) + '</span>' +
+        '<span class="chips">' + chips + '</span></button>';
+    }).join('');
+  }
+
+  function render() { renderHud(); renderTray(); renderBins(); }
+
+  function updateSelection() {
+    Array.prototype.forEach.call(elTray.querySelectorAll('.card'), function (el) {
+      el.setAttribute('aria-pressed', String(+el.getAttribute('data-id') === selected));
+    });
+    elBins.className = 'bins' + (selected !== null ? ' armed' : '');
+  }
+
+  function selectCard(id) {
+    selected = (selected === id) ? null : id;
+    updateSelection();
+    if (selected === null) {
+      setStatus(INTRO);
+    } else {
+      var c = cards.find(function (x) { return x.id === id; });
+      setStatus(c.a + ' − ' + c.b + '. ' + hint(c).replace('Try this: ', ''));
+    }
+  }
+
+  function focusFirstCard() {
+    var f = elTray.querySelector('.card');
+    if (f) f.focus({ preventScroll: true });
+  }
+
+  function place(id, i) {
+    var c = cards.find(function (x) { return x.id === id; });
+    if (!c || c.done) return;
+    if (c.bin === i) {
+      c.done = true;
+      selected = null;
+      setStatus('Yes! ' + c.a + ' − ' + c.b + ' = ' + c.r + ', which is in ' + rangeWords(bins[i]) + '.', 'good');
+      render();
+      if (cards.every(function (x) { return x.done; })) {
+        setTimeout(finishRound, 700);
+      } else {
+        focusFirstCard();
+      }
+    } else {
+      mistakes++;
+      selected = id;
+      setStatus('Not quite. ' + c.a + ' − ' + c.b + " isn't in " + rangeWords(bins[i]) + '. ' + hint(c), 'bad');
+      updateSelection();
+      var cardEl = elTray.querySelector('.card[data-id="' + id + '"]');
+      var binEl = elBins.querySelector('.bin[data-i="' + i + '"]');
+      [cardEl, binEl].forEach(function (el) {
+        if (!el) return;
+        var cls = el.classList.contains('bin') ? 'nope' : 'shake';
+        el.classList.remove(cls);
+        void el.offsetWidth;
+        el.classList.add(cls);
+      });
+    }
+  }
+
+  function showOverlay(html) {
+    elDialog.innerHTML = html;
+    elOverlay.hidden = false;
+    var b = elDialog.querySelector('.primary');
+    if (b) b.focus();
+  }
+
+  function starsRow(n, size) {
+    var out = '';
+    for (var i = 0; i < 3; i++) out += '<span class="' + (i < n ? '' : 'off') + '">' + star(size) + '</span>';
+    return '<div class="stars" role="img" aria-label="' + n + ' of 3 stars">' + out + '</div>';
+  }
+
+  function finishRound() {
+    var stars = mistakes === 0 ? 3 : (mistakes <= 2 ? 2 : 1);
+    totalStars += stars;
+    renderHud();
+    var msg = mistakes === 0 ? 'No mistakes. Every card went to the right bin.'
+      : (mistakes === 1 ? '1 card went to the wrong bin.' : mistakes + ' cards went to the wrong bin.');
+    if (round >= TOTAL_ROUNDS) {
+      var nextLv = LEVELS[level + 1] ? level + 1 : null;
+      showOverlay(
+        '<h2>All ' + TOTAL_ROUNDS + ' rounds done</h2>' + starsRow(stars, 40) +
+        '<p>You earned ' + totalStars + ' of ' + (TOTAL_ROUNDS * 3) + ' stars on ' + LEVELS[level].label + '.</p>' +
+        '<div class="actions"><button type="button" class="btn primary" data-act="again">Play again</button>' +
+        (nextLv ? '<button type="button" class="btn" data-act="next-level">Try ' + LEVELS[nextLv].label + '</button>' : '') +
+        '</div>'
+      );
+    } else {
+      showOverlay(
+        '<h2>Round ' + round + ' done</h2>' + starsRow(stars, 40) +
+        '<p>' + msg + '</p>' +
+        '<div class="actions"><button type="button" class="btn primary" data-act="next-round">Next round</button></div>'
+      );
+    }
+  }
+
+  function startRound() {
+    round++;
+    mistakes = 0;
+    selected = null;
+    buildRound();
+    render();
+    setStatus(INTRO);
+  }
+
+  function startGame() {
+    round = 0;
+    totalStars = 0;
+    used = new Set();
+    elOverlay.hidden = true;
+    renderLevels();
+    startRound();
+  }
+
+  function setLevel(n) {
+    level = n;
+    try { localStorage.setItem('chalk-takeaway-level', String(n)); } catch (e) {}
+    startGame();
+  }
+
+  elLevels.addEventListener('click', function (e) {
+    var b = e.target.closest('.level');
+    if (b) setLevel(+b.getAttribute('data-level'));
+  });
+
+  elTray.addEventListener('click', function (e) {
+    var b = e.target.closest('.card');
+    if (b) selectCard(+b.getAttribute('data-id'));
+  });
+  elTray.addEventListener('dragstart', function (e) {
+    var b = e.target.closest('.card');
+    if (!b) return;
+    var id = +b.getAttribute('data-id');
+    e.dataTransfer.setData('text/plain', String(id));
+    e.dataTransfer.effectAllowed = 'move';
+    selected = id;
+    updateSelection();
+  });
+
+  elBins.addEventListener('click', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    if (selected === null) {
+      setStatus('Pick a card first, then tap a bin.');
+      return;
+    }
+    place(selected, +b.getAttribute('data-i'));
+  });
+  elBins.addEventListener('dragover', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    e.preventDefault();
+    b.classList.add('over');
+  });
+  elBins.addEventListener('dragleave', function (e) {
+    var b = e.target.closest('.bin');
+    if (b && !b.contains(e.relatedTarget)) b.classList.remove('over');
+  });
+  elBins.addEventListener('drop', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    e.preventDefault();
+    b.classList.remove('over');
+    var id = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (!isNaN(id)) place(id, +b.getAttribute('data-i'));
+  });
+
+  elDialog.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'next-round') { elOverlay.hidden = true; startRound(); }
+    else if (act === 'again') { startGame(); }
+    else if (act === 'next-level') { setLevel(level + 1); }
+  });
+
+  renderLevels();
+  startRound();
+})();
+</script>

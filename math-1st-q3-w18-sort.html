@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flat or Solid Shapes</title>
+<style>
+  :root{
+    --cream:#F4FAF2; --ink:#23283A; --card:#FFFFFF;
+    --flat-a:#FFB070; --flat-b:#E8620C;
+    --solid-a:#7DB5F2; --solid-b:#2B6CC4;
+    --bad:#E05252;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;font-family:'Trebuchet MS','Segoe UI',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;}
+  .wrap{max-width:940px;margin:0 auto;padding:18px 16px 32px;}
+  header{text-align:center;margin-bottom:8px;}
+  h1{font-size:clamp(1.6rem,5vw,2.4rem);margin:4px 0 2px;color:#2B6CC4;}
+  p.sub{margin:0;font-size:1.05rem;color:#4d5368;}
+  .scoreboard{display:flex;justify-content:center;gap:16px;margin:10px 0 16px;font-weight:bold;flex-wrap:wrap;}
+  .scoreboard span{background:var(--card);border-radius:999px;padding:6px 16px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .tray{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;min-height:130px;align-items:center;}
+  .item{
+    width:116px;height:124px;background:var(--card);border:3px solid #d9e4d6;border-radius:18px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 #d9e4d6;
+    transition:transform .15s,box-shadow .15s,border-color .15s,opacity .3s;
+  }
+  .item svg{width:76px;height:76px;}
+  .item .text{font-size:.9rem;font-weight:bold;line-height:1.1;text-align:center;}
+  .item:hover{transform:translateY(-2px);}
+  .item.selected{border-color:#2B6CC4;transform:scale(1.06);box-shadow:0 0 0 4px rgba(43,108,196,.2),0 3px 0 #2B6CC4;}
+  .item.wrong{animation:shake .4s;border-color:var(--bad);}
+  .item.done{opacity:0;transform:scale(.4);pointer-events:none;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .hint{text-align:center;color:#5d6478;min-height:1.5em;margin:12px 0;font-size:1.05rem;}
+  .bins{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;}
+  .bin{
+    flex:1;min-width:240px;max-width:420px;min-height:210px;border-radius:24px;padding:16px 12px 18px;color:#fff;text-align:center;
+    cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .12s;
+  }
+  .bin:active{transform:translateY(3px);}
+  .bin.flat{background:linear-gradient(160deg,var(--flat-a),var(--flat-b));}
+  .bin.solid{background:linear-gradient(160deg,var(--solid-a),var(--solid-b));}
+  .bin .icon{font-size:2.2rem;}
+  .bin h2{margin:0;font-size:1.6rem;}
+  .bin .def{font-size:1rem;line-height:1.25;}
+  .bin.glow{box-shadow:0 0 0 5px rgba(255,255,255,.7),0 6px 0 rgba(0,0,0,.12);}
+  .bin-items{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px;}
+  .bin-items span{background:rgba(255,255,255,.28);border-radius:10px;font-size:.95rem;padding:4px 9px;font-weight:bold;}
+  .celebrate{text-align:center;font-weight:bold;font-size:1.3rem;color:#2B6CC4;margin-top:16px;display:none;}
+  .controls{text-align:center;margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  button.btn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:10px 22px;font-size:1rem;cursor:pointer;font-family:inherit;}
+  button.btn.alt{background:#2B6CC4;}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){--cream:#171B22;--ink:#F1F3FA;--card:#232A33;}
+    .item{border-color:#3a4654;box-shadow:0 3px 0 #3a4654;}
+    p.sub,.hint{color:#b8c0d0;}
+    h1,.celebrate{color:#8DBDF5;}
+    button.btn{background:#3a4552;}
+  }
+  :root[data-theme="dark"]{--cream:#171B22;--ink:#F1F3FA;--card:#232A33;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="gSphere" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#C9E4FF"/><stop offset=".55" stop-color="#4C97E6"/><stop offset="1" stop-color="#1F5CA8"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>🔷 Flat or Solid Shapes?</h1>
+    <p class="sub">Tap a shape, then tap where it belongs!</p>
+  </header>
+  <div class="scoreboard">
+    <span id="score">✅ Correct: 0</span>
+    <span id="remaining">🧩 Left: 12</span>
+  </div>
+  <div class="tray" id="tray"></div>
+  <div class="hint" id="hint">Tap a shape to pick it up.</div>
+  <div class="bins">
+    <div class="bin flat" data-type="flat">
+      <div class="icon">📄</div><h2>Flat Shape</h2><div class="def">Lies flat on paper. You cannot hold it.</div>
+      <div class="bin-items" id="items-flat"></div>
+    </div>
+    <div class="bin solid" data-type="solid">
+      <div class="icon">📦</div><h2>Solid Shape</h2><div class="def">You can hold it. It takes up space.</div>
+      <div class="bin-items" id="items-solid"></div>
+    </div>
+  </div>
+  <div class="celebrate" id="celebrate">🎉 You sorted every shape! 🎉</div>
+  <div class="controls">
+    <button class="btn alt" id="soundBtn">🔊 Sound: On</button>
+    <button class="btn" id="resetBtn">🔄 Start Over</button>
+  </div>
+</div>
+
+<script>
+const S = {
+  circle:'<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="#F2711C"/></svg>',
+  square:'<svg viewBox="0 0 80 80"><rect x="12" y="12" width="56" height="56" fill="#E8A21C"/></svg>',
+  triangle:'<svg viewBox="0 0 80 80"><polygon points="40,10 72,68 8,68" fill="#E0523C"/></svg>',
+  rectangle:'<svg viewBox="0 0 80 80"><rect x="5" y="20" width="70" height="40" fill="#D9487E"/></svg>',
+  hexagon:'<svg viewBox="0 0 80 80"><polygon points="40,7 68,23 68,57 40,73 12,57 12,23" fill="#B8651C"/></svg>',
+  trapezoid:'<svg viewBox="0 0 80 80"><polygon points="24,18 56,18 72,62 8,62" fill="#C7462F"/></svg>',
+  sphere:'<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="url(#gSphere)"/></svg>',
+  cube:'<svg viewBox="0 0 80 80"><polygon points="40,8 68,22 40,36 12,22" fill="#9ED0FF"/><polygon points="12,22 40,36 40,70 12,56" fill="#4C97E6"/><polygon points="40,36 68,22 68,56 40,70" fill="#2B6CC4"/></svg>',
+  cylinder:'<svg viewBox="0 0 80 80"><ellipse cx="40" cy="62" rx="25" ry="9" fill="#2B6CC4"/><rect x="15" y="20" width="50" height="42" fill="#4C97E6"/><ellipse cx="40" cy="62" rx="25" ry="9" fill="#2B6CC4"/><rect x="15" y="20" width="50" height="42" fill="#4C97E6"/><path d="M15 62 A25 9 0 0 0 65 62 L65 62 L15 62Z" fill="#4C97E6"/><ellipse cx="40" cy="20" rx="25" ry="9" fill="#9ED0FF"/></svg>',
+  cone:'<svg viewBox="0 0 80 80"><path d="M40 8 L14 60 A26 10 0 0 0 66 60 Z" fill="#4C97E6"/><path d="M40 8 L66 60 A26 10 0 0 1 56 68 Z" fill="#2B6CC4" opacity=".55"/></svg>',
+  prism:'<svg viewBox="0 0 80 80"><polygon points="8,28 22,14 70,14 56,28" fill="#9ED0FF"/><rect x="8" y="28" width="48" height="40" fill="#4C97E6"/><polygon points="56,28 70,14 70,54 56,68" fill="#2B6CC4"/></svg>',
+  pyramid:'<svg viewBox="0 0 80 80"><polygon points="40,8 10,58 44,70" fill="#4C97E6"/><polygon points="40,8 44,70 72,54" fill="#2B6CC4"/></svg>',
+};
+const ITEMS = [
+  {text:"circle", svg:S.circle, type:"flat"},
+  {text:"square", svg:S.square, type:"flat"},
+  {text:"triangle", svg:S.triangle, type:"flat"},
+  {text:"rectangle", svg:S.rectangle, type:"flat"},
+  {text:"hexagon", svg:S.hexagon, type:"flat"},
+  {text:"trapezoid", svg:S.trapezoid, type:"flat"},
+  {text:"sphere", svg:S.sphere, type:"solid"},
+  {text:"cube", svg:S.cube, type:"solid"},
+  {text:"cylinder", svg:S.cylinder, type:"solid"},
+  {text:"cone", svg:S.cone, type:"solid"},
+  {text:"rectangular prism", svg:S.prism, type:"solid"},
+  {text:"pyramid", svg:S.pyramid, type:"solid"},
+];
+const NAMES={flat:"a flat shape", solid:"a solid shape"};
+let selected=null, correct=0, soundOn=true;
+const tray=document.getElementById('tray'), hint=document.getElementById('hint'), celebrate=document.getElementById('celebrate');
+
+function speak(t){
+  if(!soundOn) return;
+  try{ if('speechSynthesis' in window){ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.rate=0.85; speechSynthesis.speak(u);} }catch(e){}
+}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function render(){
+  tray.innerHTML='';
+  shuffle(ITEMS.map((it,i)=>({...it,id:i}))).forEach(it=>{
+    const el=document.createElement('div');
+    el.className='item'; el.dataset.id=it.id; el.dataset.type=it.type; el.dataset.name=it.text;
+    el.innerHTML=`${it.svg}<div class="text">${it.text}</div>`;
+    el.addEventListener('click',()=>pick(el));
+    tray.appendChild(el);
+  });
+}
+function pick(el){
+  if(el.classList.contains('done'))return;
+  document.querySelectorAll('.item.selected').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected'); selected=el;
+  speak(el.dataset.name);
+  hint.textContent='Could you hold it? Tap Flat Shape or Solid Shape.';
+}
+function sortInto(bin){
+  if(!selected){hint.textContent='Pick a shape from the top first!';return;}
+  const type=bin.dataset.type, el=selected, name=el.dataset.name;
+  bin.classList.add('glow'); setTimeout(()=>bin.classList.remove('glow'),300);
+  if(el.dataset.type===type){
+    const b=document.createElement('span'); b.textContent=name;
+    document.getElementById('items-'+type).appendChild(b);
+    el.classList.add('done'); selected=null; correct++;
+    hint.textContent=`Yes! A ${name} is ${NAMES[type]}.`;
+    speak(`Yes! A ${name} is ${NAMES[type]}.`);
+    document.getElementById('score').textContent=`✅ Correct: ${correct}`;
+    document.getElementById('remaining').textContent=`🧩 Left: ${ITEMS.length-correct}`;
+    if(correct===ITEMS.length) setTimeout(()=>celebrate.style.display='block',400);
+  } else {
+    el.classList.remove('selected'); el.classList.add('wrong'); selected=null;
+    setTimeout(()=>el.classList.remove('wrong'),400);
+    hint.textContent='Not quite. Does it lie flat, or could you hold it?';
+  }
+}
+document.querySelectorAll('.bin').forEach(b=>b.addEventListener('click',()=>sortInto(b)));
+document.getElementById('soundBtn').addEventListener('click',e=>{
+  soundOn=!soundOn; e.currentTarget.textContent=soundOn?'🔊 Sound: On':'🔇 Sound: Off';
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  correct=0; selected=null; celebrate.style.display='none';
+  ['flat','solid'].forEach(t=>document.getElementById('items-'+t).innerHTML='');
+  hint.textContent='Tap a shape to pick it up.';
+  document.getElementById('score').textContent='✅ Correct: 0';
+  document.getElementById('remaining').textContent=`🧩 Left: ${ITEMS.length}`;
+  render();
+});
+render();
+</script>
+</body>
+</html>

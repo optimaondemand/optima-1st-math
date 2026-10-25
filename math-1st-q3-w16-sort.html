@@ -1,0 +1,593 @@
+<title>Subtraction Sort</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap">
+<style>
+:root {
+  /* Layout: one centered column. Header and level picker, a status line, a tray of equation cards, then three dashed answer bins to sort the cards into. */
+  --bg: #EDF2FA;
+  --surface: #FFFFFF;
+  --ink: #14223E;
+  --muted: #56668A;
+  --line: #D3DBEB;
+  --accent: #2C5CFF;
+  --accent-ink: #FFFFFF;
+  --accent-tint: #E3EAFF;
+  --b0: #0A7F72;
+  --b0t: #DDF3EF;
+  --b1: #B04E05;
+  --b1t: #FDEBDD;
+  --b2: #6636C7;
+  --b2t: #ECE4FB;
+  --good: #177A45;
+  --good-tint: #DCF3E5;
+  --bad: #B83232;
+  --bad-tint: #FBE3E3;
+  --star: #E9A60C;
+  --shadow: 0 1px 0 rgba(20,34,62,.06), 0 6px 16px -8px rgba(20,34,62,.28);
+  --display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --body: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1630;
+    --surface: #16224A;
+    --ink: #EAF0FF;
+    --muted: #9DABCB;
+    --line: #2A3A68;
+    --accent: #7C98FF;
+    --accent-ink: #0D1630;
+    --accent-tint: #22305F;
+    --b0: #3FD0BC;
+    --b0t: #123F40;
+    --b1: #FFA15C;
+    --b1t: #4A2C17;
+    --b2: #B49BFF;
+    --b2t: #33275F;
+    --good: #5FD493;
+    --good-tint: #12392A;
+    --bad: #FF8C8C;
+    --bad-tint: #4A1D26;
+    --star: #F6C244;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 8px 18px -8px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1630;
+  --surface: #16224A;
+  --ink: #EAF0FF;
+  --muted: #9DABCB;
+  --line: #2A3A68;
+  --accent: #7C98FF;
+  --accent-ink: #0D1630;
+  --accent-tint: #22305F;
+  --b0: #3FD0BC;
+  --b0t: #123F40;
+  --b1: #FFA15C;
+  --b1t: #4A2C17;
+  --b2: #B49BFF;
+  --b2t: #33275F;
+  --good: #5FD493;
+  --good-tint: #12392A;
+  --bad: #FF8C8C;
+  --bad-tint: #4A1D26;
+  --star: #F6C244;
+  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 8px 18px -8px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.app { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin: 0;
+  text-wrap: balance;
+}
+.levels { display: flex; flex-wrap: wrap; gap: 8px; }
+.level {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.level[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.level-desc { margin: 0; color: var(--muted); font-size: .95rem; }
+
+.hud {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.hud .round { font-family: var(--display); font-size: 1.1rem; }
+.meter { display: flex; align-items: center; gap: 10px; flex: 1 1 180px; min-width: 0; color: var(--muted); font-size: .9rem; }
+.bar { flex: 1; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; min-width: 60px; }
+.bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .3s; }
+.stars-total { display: inline-flex; align-items: center; gap: 4px; color: var(--star); }
+.stars-total b { color: var(--ink); }
+
+.status {
+  margin: 0;
+  min-height: 3.2em;
+  display: flex; align-items: center;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--accent-tint);
+  font-weight: 600;
+}
+.status[data-kind="good"] { background: var(--good-tint); color: var(--good); }
+.status[data-kind="bad"] { background: var(--bad-tint); color: var(--bad); }
+
+.tray {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 10px;
+  min-height: 80px;
+}
+.card {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  min-height: 68px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  cursor: grab;
+  transition: transform .12s, border-color .12s, background .12s;
+}
+.card:hover { transform: translateY(-2px); }
+.card[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-tint); transform: translateY(-4px); }
+.card.shake { animation: shake .4s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+.tray-done { grid-column: 1 / -1; align-self: center; color: var(--muted); font-weight: 600; text-align: center; }
+
+.bins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.bin {
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px;
+  min-height: 210px;
+  padding: 12px 8px;
+  background: var(--surface);
+  border: 3px dashed var(--bc);
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: center;
+  transition: background .12s, transform .12s;
+}
+.bin[data-i="0"] { --bc: var(--b0); --bt: var(--b0t); }
+.bin[data-i="1"] { --bc: var(--b1); --bt: var(--b1t); }
+.bin[data-i="2"] { --bc: var(--b2); --bt: var(--b2t); }
+.bins.armed .bin { border-style: solid; }
+.bin:hover, .bin.over { background: var(--bt); }
+.bin.over { transform: scale(1.02); }
+.bin.nope { animation: shake .4s; }
+.bin-eq {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 2.3rem;
+  line-height: 1;
+  color: var(--bc);
+  font-variant-numeric: tabular-nums;
+}
+.bin-eq small {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--body);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chips { display: flex; flex-direction: column; gap: 6px; }
+.chip {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--bt);
+  color: var(--bc);
+  border-radius: 10px;
+  padding: 5px 4px;
+  animation: pop .25s;
+}
+.bin:hover .chip, .bin.over .chip { background: var(--surface); }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.overlay {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: rgba(10, 16, 34, .6);
+}
+.dialog {
+  width: 100%; max-width: 420px;
+  background: var(--surface);
+  border-radius: 22px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  animation: pop .25s;
+}
+.dialog h2 { font-family: var(--display); font-weight: 700; font-size: 1.7rem; margin: 0; text-wrap: balance; }
+.dialog p { margin: 0; color: var(--muted); }
+.dialog .stars { display: flex; gap: 6px; color: var(--star); }
+.dialog .stars .off { color: var(--line); }
+.dialog .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 6px; }
+.btn {
+  border: 2px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+@media (max-width: 440px) {
+  h1 { font-size: 1.7rem; }
+  .card { font-size: 1.4rem; }
+  .bin-eq { font-size: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="app">
+  <header>
+    <h1>Subtraction Sort</h1>
+    <div class="levels" id="levels" role="group" aria-label="Choose a level"></div>
+    <p class="level-desc" id="levelDesc"></p>
+  </header>
+
+  <div class="hud" id="hud"></div>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <section class="tray" id="tray" aria-label="Subtraction cards"></section>
+  <section class="bins" id="bins" aria-label="Answer bins"></section>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" id="dialog"></div>
+</div>
+
+<script>
+(function () {
+  var TOTAL_ROUNDS = 5;
+  var LEVELS = {
+    1: { label: 'Within 10', desc: 'Take away from numbers up to 10, like 9 − 4.' },
+    2: { label: 'Teen numbers', desc: 'Stay in the teens, like 17 − 4.' },
+    3: { label: 'Cross 10', desc: 'Go back past ten, like 15 − 7.' },
+    4: { label: 'Mixed', desc: 'Everything up to 20, like 18 − 9 or 12 − 12.' }
+  };
+  var STAR = '<svg viewBox="0 0 24 24" width="SIZE" height="SIZE" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>';
+  function star(size) { return STAR.replace(/SIZE/g, size); }
+
+  var level = 1, round = 0, totalStars = 0, used = new Set();
+  var cards = [], targets = [], selected = null, mistakes = 0, nextId = 1;
+
+  try {
+    var saved = parseInt(localStorage.getItem('subsort-level'), 10);
+    if (LEVELS[saved]) level = saved;
+  } catch (e) {}
+
+  var elLevels = document.getElementById('levels');
+  var elDesc = document.getElementById('levelDesc');
+  var elHud = document.getElementById('hud');
+  var elStatus = document.getElementById('status');
+  var elTray = document.getElementById('tray');
+  var elBins = document.getElementById('bins');
+  var elOverlay = document.getElementById('overlay');
+  var elDialog = document.getElementById('dialog');
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function pool(lv) {
+    var out = [];
+    for (var a = 2; a <= 20; a++) {
+      for (var b = 1; b <= a; b++) {
+        var r = a - b, ok = false;
+        if (lv === 1) ok = a <= 10;
+        else if (lv === 2) ok = a >= 11 && b <= 9 && r >= 10;
+        else if (lv === 3) ok = a >= 11 && b <= 9 && r < 10;
+        else ok = a >= 4;
+        if (ok) out.push({ a: a, b: b, r: r });
+      }
+    }
+    return out;
+  }
+
+  function groups(lv) {
+    var m = {};
+    pool(lv).forEach(function (p) { (m[p.r] = m[p.r] || []).push(p); });
+    return Object.keys(m).filter(function (k) { return m[k].length >= 3; })
+      .map(function (k) { return { r: +k, list: m[k] }; });
+  }
+
+  function pairKey(p) { return p.a + '-' + p.b; }
+
+  function buildRound() {
+    var g = groups(level);
+    var picked = shuffle(g).slice(0, 3).sort(function (x, y) { return x.r - y.r; });
+    targets = picked.map(function (x) { return x.r; });
+    cards = [];
+    picked.forEach(function (grp) {
+      var fresh = shuffle(grp.list.filter(function (p) { return !used.has(pairKey(p)); }));
+      var rest = shuffle(grp.list.filter(function (p) { return used.has(pairKey(p)); }));
+      fresh.concat(rest).slice(0, 3).forEach(function (p) {
+        used.add(pairKey(p));
+        cards.push({ id: nextId++, a: p.a, b: p.b, r: p.r, done: false });
+      });
+    });
+    cards = shuffle(cards);
+  }
+
+  function hint(c) {
+    if (c.a > 10 && c.b > c.a - 10) {
+      var x = c.a - 10;
+      return 'Try this: take away ' + x + ' to reach 10, then ' + (c.b - x) + ' more.';
+    }
+    return 'Try this: start at ' + c.a + ' and count back ' + c.b + '.';
+  }
+
+  function setStatus(text, kind) {
+    elStatus.textContent = text;
+    elStatus.setAttribute('data-kind', kind || 'info');
+  }
+
+  function renderLevels() {
+    elLevels.innerHTML = Object.keys(LEVELS).map(function (k) {
+      return '<button type="button" class="level" data-level="' + k + '" aria-pressed="' + (+k === level) + '">' + LEVELS[k].label + '</button>';
+    }).join('');
+    elDesc.textContent = LEVELS[level].desc;
+  }
+
+  function renderHud() {
+    var placed = cards.filter(function (c) { return c.done; }).length;
+    var pct = cards.length ? Math.round(placed / cards.length * 100) : 0;
+    elHud.innerHTML =
+      '<span class="round">Round ' + round + ' of ' + TOTAL_ROUNDS + '</span>' +
+      '<span class="meter"><span>' + placed + ' of ' + cards.length + ' sorted</span><span class="bar"><span style="width:' + pct + '%"></span></span></span>' +
+      '<span class="stars-total" aria-label="' + totalStars + ' stars earned">' + star(22) + '<b>' + totalStars + '</b></span>';
+  }
+
+  function renderTray() {
+    var left = cards.filter(function (c) { return !c.done; });
+    if (!left.length) {
+      elTray.innerHTML = '<p class="tray-done">Every card is sorted.</p>';
+      return;
+    }
+    elTray.innerHTML = left.map(function (c) {
+      return '<button type="button" class="card" draggable="true" data-id="' + c.id + '" aria-pressed="' + (selected === c.id) + '" aria-label="' + c.a + ' minus ' + c.b + '">' + c.a + ' − ' + c.b + '</button>';
+    }).join('');
+  }
+
+  function renderBins() {
+    elBins.className = 'bins' + (selected !== null ? ' armed' : '');
+    elBins.innerHTML = targets.map(function (t, i) {
+      var inBin = cards.filter(function (c) { return c.done && c.r === t; });
+      var chips = inBin.map(function (c) { return '<span class="chip">' + c.a + ' − ' + c.b + '</span>'; }).join('');
+      return '<button type="button" class="bin" data-i="' + i + '" aria-label="Answer ' + t + '. ' + inBin.length + ' cards in this bin.">' +
+        '<span class="bin-eq"><small>answer</small>' + t + '</span>' +
+        '<span class="chips">' + chips + '</span></button>';
+    }).join('');
+  }
+
+  function render() { renderHud(); renderTray(); renderBins(); }
+
+  function updateSelection() {
+    Array.prototype.forEach.call(elTray.querySelectorAll('.card'), function (el) {
+      el.setAttribute('aria-pressed', String(+el.getAttribute('data-id') === selected));
+    });
+    elBins.className = 'bins' + (selected !== null ? ' armed' : '');
+  }
+
+  function selectCard(id) {
+    selected = (selected === id) ? null : id;
+    updateSelection();
+    if (selected === null) {
+      setStatus('Tap a card, then tap the bin with the matching answer. You can drag cards too.');
+    } else {
+      var c = cards.find(function (x) { return x.id === id; });
+      setStatus(c.a + ' − ' + c.b + '. ' + hint(c).replace('Try this: ', ''));
+    }
+  }
+
+  function focusFirstCard() {
+    var f = elTray.querySelector('.card');
+    if (f) f.focus({ preventScroll: true });
+  }
+
+  function place(id, i) {
+    var c = cards.find(function (x) { return x.id === id; });
+    if (!c || c.done) return;
+    if (c.r === targets[i]) {
+      c.done = true;
+      selected = null;
+      setStatus('Yes! ' + c.a + ' − ' + c.b + ' = ' + c.r + '.', 'good');
+      render();
+      if (cards.every(function (x) { return x.done; })) {
+        setTimeout(finishRound, 700);
+      } else {
+        focusFirstCard();
+      }
+    } else {
+      mistakes++;
+      selected = id;
+      setStatus('Not quite. ' + c.a + ' − ' + c.b + " isn't " + targets[i] + '. ' + hint(c), 'bad');
+      updateSelection();
+      var cardEl = elTray.querySelector('.card[data-id="' + id + '"]');
+      var binEl = elBins.querySelector('.bin[data-i="' + i + '"]');
+      [cardEl, binEl].forEach(function (el) {
+        if (!el) return;
+        var cls = el.classList.contains('bin') ? 'nope' : 'shake';
+        el.classList.remove(cls);
+        void el.offsetWidth;
+        el.classList.add(cls);
+      });
+    }
+  }
+
+  function showOverlay(html) {
+    elDialog.innerHTML = html;
+    elOverlay.hidden = false;
+    var b = elDialog.querySelector('.primary');
+    if (b) b.focus();
+  }
+
+  function starsRow(n, size) {
+    var out = '';
+    for (var i = 0; i < 3; i++) out += '<span class="' + (i < n ? '' : 'off') + '">' + star(size) + '</span>';
+    return '<div class="stars" role="img" aria-label="' + n + ' of 3 stars">' + out + '</div>';
+  }
+
+  var lastRoundStars = 0;
+  function finishRound() {
+    lastRoundStars = mistakes === 0 ? 3 : (mistakes <= 2 ? 2 : 1);
+    totalStars += lastRoundStars;
+    renderHud();
+    var msg = mistakes === 0 ? 'No mistakes. Every card went to the right bin.'
+      : (mistakes === 1 ? '1 card went to the wrong bin.' : mistakes + ' cards went to the wrong bin.');
+    if (round >= TOTAL_ROUNDS) {
+      var nextLv = level < 4 ? level + 1 : null;
+      showOverlay(
+        '<h2>All ' + TOTAL_ROUNDS + ' rounds done</h2>' + starsRow(lastRoundStars, 40) +
+        '<p>You earned ' + totalStars + ' of ' + (TOTAL_ROUNDS * 3) + ' stars on ' + LEVELS[level].label + '.</p>' +
+        '<div class="actions"><button type="button" class="btn primary" data-act="again">Play again</button>' +
+        (nextLv ? '<button type="button" class="btn" data-act="next-level">Try ' + LEVELS[nextLv].label + '</button>' : '') +
+        '</div>'
+      );
+    } else {
+      showOverlay(
+        '<h2>Round ' + round + ' done</h2>' + starsRow(lastRoundStars, 40) +
+        '<p>' + msg + '</p>' +
+        '<div class="actions"><button type="button" class="btn primary" data-act="next-round">Next round</button></div>'
+      );
+    }
+  }
+
+  function startRound() {
+    round++;
+    mistakes = 0;
+    selected = null;
+    buildRound();
+    render();
+    setStatus('Tap a card, then tap the bin with the matching answer. You can drag cards too.');
+  }
+
+  function startGame() {
+    round = 0;
+    totalStars = 0;
+    used = new Set();
+    elOverlay.hidden = true;
+    renderLevels();
+    startRound();
+  }
+
+  function setLevel(n) {
+    level = n;
+    try { localStorage.setItem('subsort-level', String(n)); } catch (e) {}
+    startGame();
+  }
+
+  elLevels.addEventListener('click', function (e) {
+    var b = e.target.closest('.level');
+    if (b) setLevel(+b.getAttribute('data-level'));
+  });
+
+  elTray.addEventListener('click', function (e) {
+    var b = e.target.closest('.card');
+    if (b) selectCard(+b.getAttribute('data-id'));
+  });
+  elTray.addEventListener('dragstart', function (e) {
+    var b = e.target.closest('.card');
+    if (!b) return;
+    var id = +b.getAttribute('data-id');
+    e.dataTransfer.setData('text/plain', String(id));
+    e.dataTransfer.effectAllowed = 'move';
+    selected = id;
+    updateSelection();
+  });
+
+  elBins.addEventListener('click', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    if (selected === null) {
+      setStatus('Pick a card first, then tap a bin.');
+      return;
+    }
+    place(selected, +b.getAttribute('data-i'));
+  });
+  elBins.addEventListener('dragover', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    e.preventDefault();
+    b.classList.add('over');
+  });
+  elBins.addEventListener('dragleave', function (e) {
+    var b = e.target.closest('.bin');
+    if (b && !b.contains(e.relatedTarget)) b.classList.remove('over');
+  });
+  elBins.addEventListener('drop', function (e) {
+    var b = e.target.closest('.bin');
+    if (!b) return;
+    e.preventDefault();
+    b.classList.remove('over');
+    var id = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (!isNaN(id)) place(id, +b.getAttribute('data-i'));
+  });
+
+  elDialog.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'next-round') { elOverlay.hidden = true; startRound(); }
+    else if (act === 'again') { startGame(); }
+    else if (act === 'next-level') { setLevel(level + 1); }
+  });
+
+  renderLevels();
+  startRound();
+})();
+</script>
